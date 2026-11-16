@@ -1,0 +1,106 @@
+# MonSolid CI: build and package for Windows (installer + portable zip), with smoke tests.
+# Runs on pushes to main, by hand, and on version tags (v*), where it attaches the packages to a
+# DRAFT release: a person reviews and publishes it.
+name: MonSolid
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.1
+      - uses: Swatinem/rust-cache@v2
+      - name: Build monsolid.exe and monsolid-cli.exe
+        run: cargo build --release --locked -p solidcraft -p solidcraft-cli
+      - name: Smoke test (CLI, MCP session)
+        shell: pwsh
+        run: |
+          $bin = "target/release"
+          & "$bin/monsolid-cli.exe" --version
+          $requests = @(
+            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"0"}}}',
+            '{"jsonrpc":"2.0","method":"notifications/initialized"}',
+            '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}',
+            '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"inspect_design","arguments":{}}}'
+          ) -join "`n"
+          $out = $requests | & "$bin/monsolid-cli.exe" mcp
+          $out | Select-Object -First 3
+          if (-not ($out -match '"name":"monsolid"')) { throw "MCP serverInfo is not MonSolid" }
+          if (-not ($out -match '"inspect_design"')) { throw "MCP tools are missing" }
+      - name: Launch the app for a few seconds (the runner has no GPU)
+        timeout-minutes: 3
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath "target/release/monsolid.exe" -ArgumentList "--control","7878" -PassThru
+          Start-Sleep -Seconds 20
+          if ($p.HasExited) { throw "monsolid.exe exited early with code $($p.ExitCode)" }
+          Stop-Process -Id $p.Id
+      - name: Installer (NSIS) and portable zip
+        shell: pwsh
+        run: |
+          $version = (Select-String -Path Cargo.toml -Pattern '^version = "(.*)"').Matches[0].Groups[1].Value
+          $year = (Select-String -Path crates\ui-egui\src\brand.rs -Pattern '^pub const YEAR: &str = "(.*)";').Matches[0].Groups[1].Value
+          New-Item -ItemType Directory -Force dist | Out-Null
+          $makensis = "C:\Program Files (x86)\NSIS\makensis.exe"
+          if (-not (Test-Path $makensis)) { choco install nsis -y --no-progress; if ($LASTEXITCODE -ne 0) { throw "NSIS install failed" } }
+          & $makensis -V2 "-DROOT=$PWD" "-DVERSION=$version" "-DYEAR=$year" "-DBINDIR=$PWD\target\release" "-DOUTFILE=$PWD\dist\monsolid-$year-$version-windows-x64-setup.exe" packaging\monsolid\windows\monsolid.nsi
+          if ($LASTEXITCODE -ne 0) { throw "makensis failed" }
+          # The same installer under a name that stays the same from release to release (download links).
+          Copy-Item "dist\monsolid-$year-$version-windows-x64-setup.exe" "dist\MonSolid-$year-Setup.exe"
+          $stage = "target\monsolid-$year-$version-windows-x64-portable"
+          New-Item -ItemType Directory -Force $stage | Out-Null
+          Copy-Item target\release\monsolid.exe, target\release\monsolid-cli.exe, LICENSE-APACHE, LICENSE-MIT, LICENSE-BRAND, NOTICE $stage
+          Copy-Item docs\monsolid\INSTALL-mn.md "$stage\README-mn.md"
+          Copy-Item docs\monsolid\AI-mn.md "$stage\AI-guide-mn.md"
+          Compress-Archive -Path $stage -DestinationPath "dist\monsolid-$year-$version-windows-x64-portable.zip"
+          $sums = Get-ChildItem dist\*.exe, dist\*.zip | Get-FileHash -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  $(Split-Path $_.Path -Leaf)" }
+          $sums | Out-File -Encoding ascii dist\SHA256SUMS-windows.txt
+          $sums
+      - name: Silent install and uninstall
+        timeout-minutes: 8
+        shell: pwsh
+        run: |
+          $setup = Get-ChildItem dist\monsolid-*-setup.exe | Select-Object -First 1
+          Start-Process -FilePath $setup.FullName -ArgumentList "/S" -Wait
+          $dir = "$env:LOCALAPPDATA\Programs\MonSolid"
+          if (-not (Test-Path "$dir\monsolid.exe")) { throw "not installed" }
+          & "$dir\monsolid-cli.exe" --version
+          Get-Content "$dir\AI-connect.txt"
+          if (-not (Test-Path "HKCU:\Software\Classes\AppUserModelId\MonHydro.MonSolid")) { throw "notification id not registered" }
+          Start-Process -FilePath "$dir\uninstall.exe" -ArgumentList "/S" -Wait
+          Start-Sleep -Seconds 3
+          if (Test-Path "$dir\monsolid.exe") { throw "not uninstalled" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: monsolid-windows-x64
+          path: dist/*
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: monsolid-windows-x64
+          path: dist
+      - name: Draft release (publish by hand after review)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" dist/* --repo "${GITHUB_REPOSITORY}" --draft --title "MonSolid 2026 ${GITHUB_REF_NAME}" --notes "MonSolid 2026 ${GITHUB_REF_NAME}, based on SolidCraft by Tangency Labs. See docs/monsolid/INSTALL-mn.md."

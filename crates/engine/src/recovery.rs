@@ -515,9 +515,9 @@ mod tests {
     #[test]
     fn recovery_dirs_and_their_legacy_names() {
         let (dir, legacy) = super::dirs_under(Path::new("/data"), false);
-        assert_eq!((dir.as_path(), legacy.as_path()), (Path::new("/data/solidcraft/recovery"), Path::new("/data/solvecraft/recovery")));
+        assert_eq!((dir.as_path(), legacy.as_path()), (Path::new("/data/monsolid/recovery"), Path::new("/data/monsolid-none/recovery")));
         let (dir, legacy) = super::dirs_under(Path::new("/data"), true);
-        assert_eq!((dir.as_path(), legacy.as_path()), (Path::new("/data/SolidCraft/recovery"), Path::new("/data/SolveCraft/recovery")));
+        assert_eq!((dir.as_path(), legacy.as_path()), (Path::new("/data/MonSolid/recovery"), Path::new("/data/MonSolid-none/recovery")));
     }
 
     use super::*;
