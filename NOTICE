@@ -1,3 +1,22 @@
+MonSolid
+Copyright (c) 2026 the MonSolid contributors.
+MonSolid is a modified version of SolidCraft (https://github.com/tangency-labs/solidcraft), forked
+on 2026-11-16 from upstream commit 3269e94a. MonSolid's own changes (the MonSolid name, year and mark,
+the Mongolian interface catalog, the news feed (crates/mon-news), the Windows installer in
+packaging/monsolid/ and the documentation in docs/monsolid/) are licensed like SolidCraft's code,
+under the MIT License or the Apache License, Version 2.0, at your option (LICENSE-MIT,
+LICENSE-APACHE). MonSolid is not affiliated with, sponsored by or endorsed by Tangency Labs or the
+SolidCraft maintainers.
+
+SolidCraft's brand and interface material (crates/ui-kit, crates/look, crates/theme) is under the
+SolidCraft Brand and Interface Licence (LICENSE-BRAND), not under MIT OR Apache-2.0. MonSolid keeps
+that licence and does not distribute builds containing that material without the SolidCraft
+maintainers' written permission (LICENSE-BRAND, section 3).
+
+The SolidCraft notice follows unchanged.
+
+------------------------------------------------------------------------
+
 SolidCraft
 Copyright (c) 2026 SolidCraft contributors.
 Licensed under the MIT License or the Apache License, Version 2.0, at your option
