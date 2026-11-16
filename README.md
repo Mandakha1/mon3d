@@ -1,4 +1,4 @@
-<h1 align="center">MonSolid 2026</h1>
+<h1 align="center">Mon3D 2026</h1>
 
 <p align="center">
   <b>Монгол инженерүүдэд зориулсан үнэгүй, нээлттэй эхийн параметрт 3D CAD програм.</b><br>
@@ -6,15 +6,15 @@
 </p>
 
 <p align="center">
-  <a href="docs/monsolid/INSTALL-mn.md">Суулгах</a> ·
-  <a href="docs/monsolid/AI-mn.md">AI-аар загварчлуулах</a> ·
+  <a href="docs/mon3d/INSTALL-mn.md">Суулгах</a> ·
+  <a href="docs/mon3d/AI-mn.md">AI-аар загварчлуулах</a> ·
   <a href="#english">English</a> ·
   <a href="https://cad.monhydro.com">Сургалт</a>
 </p>
 
 ---
 
-## MonSolid гэж юу вэ?
+## Mon3D гэж юу вэ?
 
 SolidWorks, Fusion-тай төстэй параметрт 3D CAD: хэмжээстэй эскиз, хязгаарлалт, шахаж өргөх, эргүүлж
 үүсгэх, замаар болон огтлолоор үүсгэх, булан дугуйлах, бүрхүүл, нүх, эрэг, массив, угсралт, хуудас
@@ -32,43 +32,43 @@ SolidWorks, Fusion-тай төстэй параметрт 3D CAD: хэмжээс
 ## AI-аар загварчлуулах — 1 минутад
 
 ```bash
-monsolid-cli mcp setup
+mon3d-cli mcp setup
 ```
 
-Дараа нь Claude-д: *«MonSolid дээр DN50 фланц загварчил: гадна диаметр 165 мм, зузаан 18 мм,
+Дараа нь Claude-д: *«Mon3D дээр DN50 фланц загварчил: гадна диаметр 165 мм, зузаан 18 мм,
 125 мм-ийн тойрог дээр 4 ширхэг M16 нүх. STEP болгон хадгал.»*
 
 ## Эх кодоос build хийх
 
 ```bash
-cargo run --release -p solidcraft              # MonSolid програм (binary: monsolid)
-cargo build --release -p solidcraft-cli        # monsolid-cli (MCP сервер, хөрвүүлэгч)
-packaging/monsolid/build-windows.sh            # macOS/Linux дээрээс Windows суулгагч
+cargo run --release -p solidcraft              # Mon3D програм (binary: mon3d)
+cargo build --release -p solidcraft-cli        # mon3d-cli (MCP сервер, хөрвүүлэгч)
+packaging/mon3d/build-windows.sh            # macOS/Linux дээрээс Windows суулгагч
 ```
 
-Дэлгэрэнгүй: [docs/monsolid/FORK.md](docs/monsolid/FORK.md).
+Дэлгэрэнгүй: [docs/mon3d/FORK.md](docs/mon3d/FORK.md).
 
 ## Эх сурвалж ба лиценз
 
-MonSolid нь Tangency Labs болон хувь нэмэр оруулагчдын [SolidCraft](https://github.com/tangency-labs/solidcraft)
+Mon3D нь Tangency Labs болон хувь нэмэр оруулагчдын [SolidCraft](https://github.com/tangency-labs/solidcraft)
 дээр суурилсан. Код нь **MIT OR Apache-2.0** ([LICENSE-MIT](LICENSE-MIT), [LICENSE-APACHE](LICENSE-APACHE),
 [NOTICE](NOTICE)); интерфейсийн хэсэг (`crates/ui-kit`, `crates/look`, `crates/theme`) нь
-[LICENSE-BRAND](LICENSE-BRAND)-ийн дагуу. MonSolid бол Tangency Labs-ийн бүтээгдэхүүн биш.
+[LICENSE-BRAND](LICENSE-BRAND)-ийн дагуу. Mon3D бол Tangency Labs-ийн бүтээгдэхүүн биш.
 
 ---
 
 <a id="english"></a>
 ## English
 
-**MonSolid 2026** is a free, open-source parametric 3D CAD application for Mongolian engineers,
+**Mon3D 2026** is a free, open-source parametric 3D CAD application for Mongolian engineers,
 based on [SolidCraft](https://github.com/tangency-labs/solidcraft) by Tangency Labs and its
 contributors. It adds a complete Mongolian interface (switchable with English), its own name, year
 and mark, a news feed for courses and announcements (in-app cards and Windows notifications, no
 tracking, can be turned off) and a per-user Windows installer. Model by hand, or let Claude or
 ChatGPT model for you over the built-in MCP server.
 
-Docs: [install (mn)](docs/monsolid/INSTALL-mn.md) · [AI control (mn)](docs/monsolid/AI-mn.md) ·
-[fork notes](docs/monsolid/FORK.md) · [upstream SolidCraft README](docs/upstream/SolidCraft-README.md)
+Docs: [install (mn)](docs/mon3d/INSTALL-mn.md) · [AI control (mn)](docs/mon3d/AI-mn.md) ·
+[fork notes](docs/mon3d/FORK.md) · [upstream SolidCraft README](docs/upstream/SolidCraft-README.md)
 
-Code licence: MIT OR Apache-2.0, like SolidCraft; interface material under LICENSE-BRAND. MonSolid is
+Code licence: MIT OR Apache-2.0, like SolidCraft; interface material under LICENSE-BRAND. Mon3D is
 not affiliated with or endorsed by Tangency Labs.

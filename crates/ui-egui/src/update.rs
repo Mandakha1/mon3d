@@ -30,14 +30,14 @@ use crate::ui_kit;
 use solidcraft_theme::Tokens;
 
 /// The repository releases come from.
-pub const REPO: &str = "Mandakha1/monsolid";
+pub const REPO: &str = "Mandakha1/mon3d";
 /// The one request an update check makes.
-pub const LATEST_API: &str = "https://api.github.com/repos/Mandakha1/monsolid/releases/latest";
+pub const LATEST_API: &str = "https://api.github.com/repos/Mandakha1/mon3d/releases/latest";
 /// Where Download goes when no package fits this installation.
-pub const RELEASES_PAGE: &str = "https://github.com/Mandakha1/monsolid/releases/latest";
-/// Release pages and assets must be on GitHub, under MonSolid's repository (either spelling of the
+pub const RELEASES_PAGE: &str = "https://github.com/Mandakha1/mon3d/releases/latest";
+/// Release pages and assets must be on GitHub, under Mon3D's repository (either spelling of the
 /// owner: GitHub treats owner names case-insensitively in the links it returns).
-const RELEASE_PREFIXES: [&str; 2] = ["https://github.com/Mandakha1/monsolid/releases/", "https://github.com/mandakha1/monsolid/releases/"];
+const RELEASE_PREFIXES: [&str; 2] = ["https://github.com/Mandakha1/mon3d/releases/", "https://github.com/mandakha1/mon3d/releases/"];
 
 /// A release page or asset URL: github.com, one of the two owners, exactly `solidcraft`, then
 /// `/releases/` (the trailing slash rules out look-alike names such as `solidcraft-evil`).
@@ -45,8 +45,8 @@ fn is_release_url(url: &str) -> bool {
     RELEASE_PREFIXES.iter().any(|p| url.starts_with(p))
 }
 
-/// MonSolid checks Mandakha1/monsolid for updates by itself (on since its first published release,
-/// v0.43.0 "MonSolid 2026"); Check now always works.
+/// Mon3D checks Mandakha1/mon3d for updates by itself (on since its first published release,
+/// v0.43.0 "Mon3D 2026"); Check now always works.
 pub const AUTOMATIC_CHECKS: bool = true;
 /// While the app stays open, automatic checks run once a day (every start checks too).
 pub const CHECK_INTERVAL_S: f64 = 24.0 * 3600.0;
@@ -114,7 +114,7 @@ pub fn comparable(v: &semver::Version) -> semver::Version {
 /// candidate and nightly releases are all tagged `v<version>`), else, for a development build or
 /// a string that is not a version, the release history.
 pub fn release_notes_url(version: &str, release_build: bool) -> String {
-    const HISTORY: &str = "https://github.com/Mandakha1/monsolid/releases";
+    const HISTORY: &str = "https://github.com/Mandakha1/mon3d/releases";
     if release_build && parse_version(version).is_some() && version.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '-' | '+')) {
         format!("{HISTORY}/tag/v{version}")
     } else {
@@ -233,7 +233,7 @@ pub fn detect(p: &Probe) -> InstallKind {
             if installed || under("ProgramFiles") || under("ProgramW6432") || under("ProgramFiles(x86)") {
                 return InstallKind::WindowsMsi;
             }
-            if exe.parent().is_some_and(|d| (p.exists)(&d.join("monsolid-cli.exe"))) {
+            if exe.parent().is_some_and(|d| (p.exists)(&d.join("mon3d-cli.exe"))) {
                 return InstallKind::WindowsPortable;
             }
             InstallKind::WindowsExe

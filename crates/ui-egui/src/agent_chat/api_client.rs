@@ -1,7 +1,7 @@
 //! The API backend (desktop only): a model behind an endpoint SolidCraft talks to itself, either
 //! OpenAI-compatible (Ollama, LM Studio, OpenAI, any URL the user gives) or Anthropic-compatible
 //! (the Anthropic Messages API, or an endpoint that speaks it). SolidCraft runs the tool loop
-//! itself, with the same tools the ACP agents get: it starts the same MCP server (`monsolid-cli
+//! itself, with the same tools the ACP agents get: it starts the same MCP server (`mon3d-cli
 //! mcp --connect` to the chat's own endpoint) and is its client, so every tool call passes the
 //! same gate, limits and folder checks. The key, when there is one, comes from the system keychain
 //! for this connection only.

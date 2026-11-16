@@ -50,18 +50,18 @@ pub fn default_dir() -> Option<PathBuf> {
     Some(dir)
 }
 
-/// MonSolid's per-user data folder (the recovery folder's parent unless
-/// `SOLIDCRAFT_RECOVERY_DIR` moves that): `%LOCALAPPDATA%\MonSolid`,
-/// `~/Library/Application Support/MonSolid`, or `$XDG_DATA_HOME/monsolid`
-/// (`~/.local/share/monsolid`).
+/// Mon3D's per-user data folder (the recovery folder's parent unless
+/// `SOLIDCRAFT_RECOVERY_DIR` moves that): `%LOCALAPPDATA%\Mon3D`,
+/// `~/Library/Application Support/Mon3D`, or `$XDG_DATA_HOME/mon3d`
+/// (`~/.local/share/mon3d`).
 pub fn data_dir() -> Option<PathBuf> {
     let env = |k: &str| std::env::var_os(k).filter(|d| !d.is_empty()).map(PathBuf::from);
     if cfg!(windows) {
-        Some(env("LOCALAPPDATA")?.join("MonSolid"))
+        Some(env("LOCALAPPDATA")?.join("Mon3D"))
     } else if cfg!(target_os = "macos") {
-        Some(env("HOME")?.join("Library/Application Support/MonSolid"))
+        Some(env("HOME")?.join("Library/Application Support/Mon3D"))
     } else {
-        Some(env("XDG_DATA_HOME").or_else(|| env("HOME").map(|h| h.join(".local/share")))?.join("monsolid"))
+        Some(env("XDG_DATA_HOME").or_else(|| env("HOME").map(|h| h.join(".local/share")))?.join("mon3d"))
     }
 }
 
@@ -72,18 +72,18 @@ pub fn data_dir() -> Option<PathBuf> {
 pub fn cache_dir() -> Option<PathBuf> {
     let env = |k: &str| std::env::var_os(k).filter(|d| !d.is_empty()).map(PathBuf::from);
     if cfg!(windows) {
-        Some(env("LOCALAPPDATA")?.join("MonSolid"))
+        Some(env("LOCALAPPDATA")?.join("Mon3D"))
     } else if cfg!(target_os = "macos") {
-        Some(env("HOME")?.join("Library/Caches/MonSolid"))
+        Some(env("HOME")?.join("Library/Caches/Mon3D"))
     } else {
-        Some(env("XDG_CACHE_HOME").or_else(|| env("HOME").map(|h| h.join(".cache")))?.join("monsolid"))
+        Some(env("XDG_CACHE_HOME").or_else(|| env("HOME").map(|h| h.join(".cache")))?.join("mon3d"))
     }
 }
 
 /// The recovery folder under the per-user data `root`, and the folder earlier releases used.
 /// Windows and macOS name the app's folder in title case, other systems in lower case.
 fn dirs_under(root: &Path, title_case: bool) -> (PathBuf, PathBuf) {
-    let (name, legacy) = if title_case { ("MonSolid", "MonSolid-none") } else { ("monsolid", "monsolid-none") };
+    let (name, legacy) = if title_case { ("Mon3D", "Mon3D-none") } else { ("mon3d", "mon3d-none") };
     (root.join(name).join("recovery"), root.join(legacy).join("recovery"))
 }
 
@@ -515,9 +515,9 @@ mod tests {
     #[test]
     fn recovery_dirs_and_their_legacy_names() {
         let (dir, legacy) = super::dirs_under(Path::new("/data"), false);
-        assert_eq!((dir.as_path(), legacy.as_path()), (Path::new("/data/monsolid/recovery"), Path::new("/data/monsolid-none/recovery")));
+        assert_eq!((dir.as_path(), legacy.as_path()), (Path::new("/data/mon3d/recovery"), Path::new("/data/mon3d-none/recovery")));
         let (dir, legacy) = super::dirs_under(Path::new("/data"), true);
-        assert_eq!((dir.as_path(), legacy.as_path()), (Path::new("/data/MonSolid/recovery"), Path::new("/data/MonSolid-none/recovery")));
+        assert_eq!((dir.as_path(), legacy.as_path()), (Path::new("/data/Mon3D/recovery"), Path::new("/data/Mon3D-none/recovery")));
     }
 
     use super::*;

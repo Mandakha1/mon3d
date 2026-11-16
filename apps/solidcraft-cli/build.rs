@@ -9,7 +9,7 @@ fn main() {
     if windows && std::env::var("CARGO_CFG_TARGET_ENV").is_ok_and(|env| env == "msvc") {
         println!("cargo:rustc-link-arg-bins=/STACK:8388608");
     } else if windows && std::env::var("CARGO_CFG_TARGET_ENV").is_ok_and(|env| env == "gnu") {
-        // MonSolid's MinGW cross-build (packaging/monsolid): the same 8 MiB main-thread stack.
+        // Mon3D's MinGW cross-build (packaging/mon3d): the same 8 MiB main-thread stack.
         println!("cargo:rustc-link-arg-bins=-Wl,--stack,8388608");
     }
 }

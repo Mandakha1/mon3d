@@ -1,5 +1,5 @@
 //! A scene's colours come from its [`Palette`] (#974): the app draws `ui.render` in its theme,
-//! while `monsolid-cli snapshot`, MCP screenshots and thumbnails keep [`Palette::DEFAULT`].
+//! while `mon3d-cli snapshot`, MCP screenshots and thumbnails keep [`Palette::DEFAULT`].
 
 use super::*;
 use serde_json::json;

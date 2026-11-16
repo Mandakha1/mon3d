@@ -1,4 +1,4 @@
-//! `monsolid-cli crashes`: the crash reports the desktop app wrote on this computer
+//! `mon3d-cli crashes`: the crash reports the desktop app wrote on this computer
 //! (docs/crash-reports.md): list them, show one, replay one, delete them.
 
 use std::sync::Mutex;

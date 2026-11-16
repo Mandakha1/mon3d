@@ -1,6 +1,6 @@
-//! The MonSolid mark, shared by desktop, packaging and CLI: an isometric cube in the colours of
+//! The Mon3D mark, shared by desktop, packaging and CLI: an isometric cube in the colours of
 //! the Mongolian flag (red, blue, red) with a Soyombo-gold top, three faces with transparent gaps
-//! between them. MonSolid's own artwork; it replaces SolidCraft's mark in this fork.
+//! between them. Mon3D's own artwork; it replaces SolidCraft's mark in this fork.
 type P = (f32, f32);
 
 /// One face in that SVG's units: its outline, and its linear gradient from one point and

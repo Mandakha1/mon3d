@@ -14,7 +14,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if std::env::var("CARGO_CFG_TARGET_ENV")? == "msvc" {
         println!("cargo:rustc-link-arg-bins=/STACK:8388608");
     } else if std::env::var("CARGO_CFG_TARGET_ENV")? == "gnu" {
-        // MonSolid's MinGW cross-build (packaging/monsolid): the same 8 MiB main-thread stack.
+        // Mon3D's MinGW cross-build (packaging/mon3d): the same 8 MiB main-thread stack.
         println!("cargo:rustc-link-arg-bins=-Wl,--stack,8388608");
     }
     let out = std::path::PathBuf::from(std::env::var_os("OUT_DIR").ok_or("missing OUT_DIR")?);
@@ -23,7 +23,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let rc = out.join("solidcraft.rc");
     let icon_line = format!("1 ICON \"{}\"\n", copy.display().to_string().replace('\\', "/"));
     std::fs::write(&rc, format!("{icon_line}{}", version_resource(&std::env::var("CARGO_PKG_VERSION")?)))?;
-    embed_resource::compile_for(&rc, ["monsolid"], embed_resource::NONE).manifest_required()?;
+    embed_resource::compile_for(&rc, ["mon3d"], embed_resource::NONE).manifest_required()?;
     Ok(())
 }
 
@@ -36,6 +36,6 @@ fn version_resource(version: &str) -> String {
     let mut next = || numbers.next().unwrap_or(0);
     let (major, minor, patch) = (next(), next(), next());
     format!(
-        "1 VERSIONINFO\nFILEVERSION {major},{minor},{patch},0\nPRODUCTVERSION {major},{minor},{patch},0\nFILEOS 0x40004\nFILETYPE 0x1\n{{\nBLOCK \"StringFileInfo\"\n{{\nBLOCK \"040904B0\"\n{{\nVALUE \"CompanyName\", \"MonSolid contributors\"\nVALUE \"FileDescription\", \"MonSolid 2026, parametric 3D CAD (based on SolidCraft)\"\nVALUE \"FileVersion\", \"{version}\"\nVALUE \"InternalName\", \"monsolid\"\nVALUE \"OriginalFilename\", \"monsolid.exe\"\nVALUE \"ProductName\", \"MonSolid 2026\"\nVALUE \"ProductVersion\", \"{version}\"\n}}\n}}\nBLOCK \"VarFileInfo\"\n{{\nVALUE \"Translation\", 0x0409, 1200\n}}\n}}\n"
+        "1 VERSIONINFO\nFILEVERSION {major},{minor},{patch},0\nPRODUCTVERSION {major},{minor},{patch},0\nFILEOS 0x40004\nFILETYPE 0x1\n{{\nBLOCK \"StringFileInfo\"\n{{\nBLOCK \"040904B0\"\n{{\nVALUE \"CompanyName\", \"Mon3D contributors\"\nVALUE \"FileDescription\", \"Mon3D 2026, parametric 3D CAD (based on SolidCraft)\"\nVALUE \"FileVersion\", \"{version}\"\nVALUE \"InternalName\", \"mon3d\"\nVALUE \"OriginalFilename\", \"mon3d.exe\"\nVALUE \"ProductName\", \"Mon3D 2026\"\nVALUE \"ProductVersion\", \"{version}\"\n}}\n}}\nBLOCK \"VarFileInfo\"\n{{\nVALUE \"Translation\", 0x0409, 1200\n}}\n}}\n"
     )
 }

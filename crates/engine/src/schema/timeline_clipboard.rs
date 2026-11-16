@@ -361,7 +361,7 @@ fn script_path<'de, D: Deserializer<'de>>(d: D) -> Result<Option<String>, D::Err
     }
 }
 
-/// Write the design's history as a command script that rebuilds it (`monsolid-cli eval` and
+/// Write the design's history as a command script that rebuilds it (`mon3d-cli eval` and
 /// `run` replay it): one step per setting and feature, and a list of what the script leaves out.
 /// A design with components or joints is refused for now. The design is not changed.
 #[derive(Debug, Deserialize, JsonSchema)]

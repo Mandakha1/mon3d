@@ -1714,7 +1714,7 @@ preference_settings! {
     /// Custom instructions (#8220): text the agent chat adds to its system note when a session
     /// starts (`agent_chat::acp::system_note`). No page reset discards this user-authored text.
     agent_instructions: String = String::new();
-    /// Compact output for agents connected through the MCP server (`monsolid-cli mcp`, docs/mcp.md):
+    /// Compact output for agents connected through the MCP server (`mon3d-cli mcp`, docs/mcp.md):
     /// `inspect_design` summarises sketches and tool JSON is not pretty-printed. Off: as always.
     /// The server asks once per agent session (`mcp.options`), so a change applies to the next one.
     mcp_compact: bool = false, PAGE_ASSISTANT;

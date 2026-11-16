@@ -5,10 +5,10 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 publish = false
-default-run = "monsolid"
+default-run = "mon3d"
 
 [[bin]]
-name = "monsolid"
+name = "mon3d"
 path = "src/main.rs"
 
 [features]

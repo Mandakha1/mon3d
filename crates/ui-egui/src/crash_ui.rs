@@ -263,7 +263,7 @@ mod tests {
             "while running `solid.fillet`",
             "\"radius\": 2",
             "solid.box",
-            "monsolid-cli crashes replay 20261012-162341-bb60791ed6692f1d",
+            "mon3d-cli crashes replay 20261012-162341-bb60791ed6692f1d",
             "Renderer: test",
             "Recorded 2 time(s)",
         ] {

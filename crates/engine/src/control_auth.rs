@@ -6,7 +6,7 @@ use solidcraft_control::auth::App;
 /// SolidCraft's control channel: token files in `<data folder>/control` (`SOLIDCRAFT_CONTROL_DIR`
 /// replaces it), `SOLIDCRAFT_CONTROL_TOKEN`, and 27878 first when the launch names no port.
 pub const APP: App =
-    App { name: "MonSolid", data_dir: crate::recovery::data_dir, env: solidcraft_geom::env::var_os, utc: crate::crash::utc, default_port: 27878 };
+    App { name: "Mon3D", data_dir: crate::recovery::data_dir, env: solidcraft_geom::env::var_os, utc: crate::crash::utc, default_port: 27878 };
 
 #[cfg(test)]
 mod tests {

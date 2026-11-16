@@ -1,5 +1,5 @@
 //! A design's history as a command script (#886): `timeline.export_script` writes the steps
-//! that rebuild the design (`monsolid-cli eval` / `run` replay them), and `timeline.add`
+//! that rebuild the design (`mon3d-cli eval` / `run` replay them), and `timeline.add`
 //! appends one recorded feature, as the design file holds it, so every feature kind replays
 //! exactly: same ids, names, parameter names and stored edge and face names. Trimming the
 //! script after a step gives the design as it was at that step.
@@ -35,7 +35,7 @@ pub static COMMANDS: &[CommandSpec] = &[
         .contract(&EXPORT_SCRIPT_CONTRACT)
         .output(output_schema_for::<ExportScriptResult>)
         .params(
-        "path?: write the script to this file → script: {commands: [...]} that rebuilds the design (monsolid-cli eval/run), \
+        "path?: write the script to this file → script: {commands: [...]} that rebuilds the design (mon3d-cli eval/run), \
          steps, omitted: what the script leaves out (appearances, folders, views, configurations, print-face assignments); components and assemblies \
          are not supported yet",
     ),
@@ -191,7 +191,7 @@ fn export_script(s: &mut Session, p: &Value) -> Result<Value> {
         about: ScriptAbout {
             design: s.doc.name.clone(),
             format: solidcraft_doc::format::format_string(solidcraft_doc::format::FORMAT),
-            replay: "monsolid-cli eval script.json (timeline.add steps need a build that reads this design format)".into(),
+            replay: "mon3d-cli eval script.json (timeline.add steps need a build that reads this design format)".into(),
             version: env!("CARGO_PKG_VERSION").into(),
         },
         commands,

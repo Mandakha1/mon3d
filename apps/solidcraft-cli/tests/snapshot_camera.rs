@@ -15,7 +15,7 @@ use solidcraft_mcp::{Headless, Server};
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 
 /// Whether pictures can be drawn here; installs the renderer the CLI installs, so the MCP
-/// `screenshot` in this process draws as `monsolid-cli mcp` does.
+/// `screenshot` in this process draws as `mon3d-cli mcp` does.
 fn gpu() -> bool {
     match solidcraft_viewport_gpu::capture::shared(solidcraft_gpu::env::policy().unwrap_or_else(|e| panic!("{e}"))) {
         Ok(c) => {
@@ -344,7 +344,7 @@ fn a_forced_cpu_snapshot_is_the_cpu_rasterizers_and_says_so() {
 
 /// `hardware` (and `software`) never fall to the CPU rasterizer: without such an adapter the
 /// snapshot fails, naming the policy, and writes nothing; with one it says it was drawn on the GPU.
-/// `auto` lands where `monsolid-cli gpu` says it does.
+/// `auto` lands where `mon3d-cli gpu` says it does.
 #[test]
 fn a_strict_policy_never_falls_to_the_cpu() {
     let dir = Scratch::new();
@@ -365,7 +365,7 @@ fn a_strict_policy_never_falls_to_the_cpu() {
         } else {
             assert_eq!(report["lands_on"], Value::Null, "{policy}: {report}");
             assert_eq!(output.status.code(), Some(1), "{policy}: {stderr}");
-            assert!(stderr.contains(&format!("`{policy}` policy")) && stderr.contains("monsolid-cli gpu"), "{policy}: {stderr}");
+            assert!(stderr.contains(&format!("`{policy}` policy")) && stderr.contains("mon3d-cli gpu"), "{policy}: {stderr}");
             assert!(!dir.0.join(format!("{policy}.png")).exists());
         }
     }

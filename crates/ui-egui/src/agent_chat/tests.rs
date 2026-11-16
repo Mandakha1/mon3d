@@ -828,8 +828,8 @@ fn a_title_that_mentions_solidcraft_goes_through_the_users_mode() {
     app.agent_chat.running_id = "codex".into();
     let opts = || vec![PermissionOption { id: "allow".into(), name: "Allow".into(), kind: "allow_once".into() }];
     let titles = [
-        ("run monsolid-cli; ls", Some("execute")),
-        ("run monsolid-cli; ls", None),
+        ("run mon3d-cli; ls", Some("execute")),
+        ("run mon3d-cli; ls", None),
         ("Edit ~/.local/share/solidcraft/agent-chat/work/notes.txt", Some("edit")),
         ("mcp__solidcraft__batch", Some("other")),
         ("mcp__solidcraft-app__batch", Some("execute")),
@@ -3879,7 +3879,7 @@ fn assistant_marks_follow_chat_login_turns_and_approvals() {
     assert_eq!(assistant_mark_for(State::Ready, "signed_in", true, 0, false, true), Stopped);
 }
 
-/// #12283: an agent started without SolidCraft's tools (no monsolid-cli beside the app) can't
+/// #12283: an agent started without SolidCraft's tools (no mon3d-cli beside the app) can't
 /// reach the design. The panel's badge and the application bar's mark say so, not Ready; the
 /// badge's hover text says how to get the tools.
 #[test]
@@ -3910,7 +3910,7 @@ fn an_agent_without_the_design_tools_is_not_shown_as_ready() {
     h.app.agent_chat.tools_port = Some(12345);
     assert_eq!(h.app.agent_chat.no_design_hint(), tr("ui.agent_chat_no_design_hint"));
     assert!(assistant_tip(&h.app, AssistantMark::NoDesign).contains(tr("ui.agent_chat_no_design_hint")));
-    // monsolid-cli was found and handed to the agent, but its tools did not start (an endpoint
+    // mon3d-cli was found and handed to the agent, but its tools did not start (an endpoint
     // agent whose MCP start failed): the hint does not say the CLI is missing.
     h.app.agent_chat.tools_bridged = true;
     assert_eq!(h.app.agent_chat.no_design_hint(), tr("ui.agent_chat_tools_not_started"));

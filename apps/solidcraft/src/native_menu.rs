@@ -79,7 +79,7 @@ fn help_label<'a>(app: &'a SolveApp, item: &str) -> &'a str {
         "messages" => app.tr_label("Messages\u{2026}"),
         "report" => app.tr_label("Report an Issue\u{2026}"),
         "crashes" => app.tr_label("Crash Reports\u{2026}"),
-        _ => app.tr_label("Install monsolid-cli command"),
+        _ => app.tr_label("Install mon3d-cli command"),
     }
 }
 
@@ -183,7 +183,7 @@ fn menu_bar(app: &SolveApp, recent: &[String]) -> MenuBar {
     let window = vec![item(app.tr_label("Agent Chat"), &FileAction::AgentChat)];
     let help = HELP.iter().map(|h| Item::action(HELP_ID, help_label(app, h), "").with(json!({ "item": h }))).collect();
     MenuBar {
-        title: "MonSolid".into(),
+        title: "Mon3D".into(),
         version: env!("CARGO_PKG_VERSION").into(),
         app: vec![item(&more("ui.preferences"), &FileAction::Settings), item(&more("ui.keyboard_shortcuts"), &FileAction::Shortcuts)],
         quit: item(&format!("{} SolidCraft", app.tr("ui.quit")), &FileAction::Quit),

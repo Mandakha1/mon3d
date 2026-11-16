@@ -1,20 +1,20 @@
-//! MonSolid's name, in one place. The product is named after its year, like other CAD releases:
+//! Mon3D's name, in one place. The product is named after its year, like other CAD releases:
 //! next year change [`YEAR`] (and [`FULL_NAME`]) and nothing else. Per-user folders, the
 //! executables and the update channel stay without the year, so a new year's release keeps the
 //! settings and autosaves of the one before.
 
 /// The product name without the year: folders, messages, the MCP server.
-pub const NAME: &str = "MonSolid";
+pub const NAME: &str = "Mon3D";
 /// The release year shown with the name.
 pub const YEAR: &str = "2026";
 /// What the window title, the About window and the installer show.
-pub const FULL_NAME: &str = "MonSolid 2026";
-/// The id Windows shows MonSolid's notifications under; the installer registers it.
-pub const AUMID: &str = "MonHydro.MonSolid";
-/// The project MonSolid is based on, credited in About (Apache-2.0 / MIT, NOTICE kept).
+pub const FULL_NAME: &str = "Mon3D 2026";
+/// The id Windows shows Mon3D's notifications under; the installer registers it.
+pub const AUMID: &str = "MonHydro.Mon3D";
+/// The project Mon3D is based on, credited in About (Apache-2.0 / MIT, NOTICE kept).
 pub const UPSTREAM: &str = "https://github.com/tangency-labs/solidcraft";
-/// MonSolid's own source repository.
-pub const SOURCE: &str = "https://github.com/Mandakha1/monsolid";
+/// Mon3D's own source repository.
+pub const SOURCE: &str = "https://github.com/Mandakha1/mon3d";
 
 #[cfg(test)]
 mod tests {
@@ -25,7 +25,7 @@ mod tests {
     }
 }
 
-/// MonSolid's mark in the application bar: the app icon's cube (red, blue, gold) as three faces with
+/// Mon3D's mark in the application bar: the app icon's cube (red, blue, gold) as three faces with
 /// gaps, `height` points tall, centred on `c`. Drawn here, not with SolidCraft's mark.
 pub fn paint_mark(p: &egui::Painter, c: egui::Pos2, height: f32) {
     use egui::{Color32, Shape, Stroke, pos2};

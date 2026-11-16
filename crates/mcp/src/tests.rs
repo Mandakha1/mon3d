@@ -327,7 +327,7 @@ fn document_only_atomic_tool_fallback_keeps_existing_checkpoint_rollback_behavio
     assert!(backend.calls.iter().any(|(_, command)| command == "edit.restore_checkpoint"));
 }
 
-/// Screenshots are drawn on the GPU by the renderer the host installs (`monsolid-cli mcp`); the
+/// Screenshots are drawn on the GPU by the renderer the host installs (`mon3d-cli mcp`); the
 /// tests install the same one. `false`, with the reason printed, on a machine without a GPU
 /// adapter: the screenshots are then left out of the test.
 fn renders() -> bool {
@@ -431,7 +431,7 @@ fn handshake_and_tools_list() {
     let init =
         call(&mut s, 1, "initialize", json!({"protocolVersion": "2025-03-26", "capabilities": {}, "clientInfo": {"name": "t", "version": "0"}}));
     assert_eq!(init["result"]["protocolVersion"], "2025-03-26");
-    assert_eq!(init["result"]["serverInfo"]["name"], "monsolid");
+    assert_eq!(init["result"]["serverInfo"]["name"], "mon3d");
     assert!(init["result"]["capabilities"]["tools"].is_object());
     assert!(init["result"]["instructions"].as_str().unwrap().contains("headless"));
     assert!(s.handle_line(r#"{"jsonrpc":"2.0","method":"notifications/initialized"}"#).is_none());
@@ -2037,7 +2037,7 @@ fn legacy_design_files_and_resource_uris() {
 fn compare_picture_returns_the_overlay_as_an_image() {
     use image::ImageEncoder as _;
     use std::io::Cursor;
-    // A scoped server, like `monsolid-cli mcp`: the reference must be inside the folders.
+    // A scoped server, like `mon3d-cli mcp`: the reference must be inside the folders.
     let base = solidcraft_engine::io::vfs::temp_dir().join(format!("solidcraft-mcp-compare-{}", std::process::id()));
     let recovery = base.join("recovery");
     std::fs::create_dir_all(&recovery).unwrap();
@@ -3377,7 +3377,7 @@ fn a_bridge_made_before_the_app_runs_connects_once_it_does() {
     // Still "connected to the SolidCraft app", which the skills read as bridged.
     assert!(remote.describe().starts_with("connected to the SolidCraft app") && remote.describe().contains("not running"), "{}", remote.describe());
     let e = remote.call("engine.execute", json!({"command": "inspect.measure"})).unwrap_err();
-    assert!(e.starts_with(crate::backend::NOT_RUNNING) && e.contains(&format!("monsolid --control {port}")), "{e}");
+    assert!(e.starts_with(crate::backend::NOT_RUNNING) && e.contains(&format!("mon3d --control {port}")), "{e}");
     let batch = crate::call_tool(&mut remote, "batch", &json!({"commands": [{"command": "solid.box"}]}));
     let text = batch["content"][0]["text"].as_str().unwrap_or_default();
     assert_eq!(batch["isError"], true);
@@ -3955,7 +3955,7 @@ fn batch_runs_a_script_file() {
     let bodies = tool(&mut s, "inspect_design", json!({"measure": false}))["bodies"].as_array().map(Vec::len);
     assert_eq!(bodies, Some(1));
 
-    // `{commands}`, as `monsolid-cli script` writes it; a failing step rolls the batch back.
+    // `{commands}`, as `mon3d-cli script` writes it; a failing step rolls the batch back.
     let script = json!({"commands": [{"command": "solid.box", "params": {"length": 5, "width": 5, "height": 5}}, {"command": "parameters.change", "params": {"name": "h2", "expression": "1 +"}}]});
     let r = raw_tool(&mut s, "batch", json!({"path": file(&root, "script.json", &script.to_string())}));
     assert_eq!(r["result"]["isError"], true, "{r}");

@@ -68,14 +68,14 @@ fn methods_per_installation() {
     }
 }
 
-const BASE: &str = "https://github.com/mandakha1/monsolid/releases/download/v9.9.9/";
+const BASE: &str = "https://github.com/mandakha1/mon3d/releases/download/v9.9.9/";
 
 fn release_with(assets: &[(&str, usize)]) -> Release {
     Release {
         tag: "v9.9.9".into(),
         name: "SolidCraft v9.9.9".into(),
         notes: String::new(),
-        page: "https://github.com/mandakha1/monsolid/releases/tag/v9.9.9".into(),
+        page: "https://github.com/mandakha1/mon3d/releases/tag/v9.9.9".into(),
         assets: assets.iter().map(|(n, size)| Asset { name: n.to_string(), url: format!("{BASE}{n}"), size: *size as u64 }).collect(),
     }
 }
@@ -184,13 +184,13 @@ fn the_portable_zip_swaps_both_executables() {
     let dir = scratch("portable");
     let exe = dir.join("solidcraft.exe");
     std::fs::write(&exe, b"old app").unwrap();
-    std::fs::write(dir.join("monsolid-cli.exe"), b"old cli").unwrap();
+    std::fs::write(dir.join("mon3d-cli.exe"), b"old cli").unwrap();
     let mut zip_bytes = Vec::new();
     {
         let mut z = zip::ZipWriter::new(std::io::Cursor::new(&mut zip_bytes));
         let o = zip::write::SimpleFileOptions::default();
         z.add_directory("solidcraft-9.9.9-windows-x64-portable/", o).unwrap();
-        for (n, b) in [("solidcraft.exe", &b"new app"[..]), ("monsolid-cli.exe", b"new cli"), ("README.md", b"readme")] {
+        for (n, b) in [("solidcraft.exe", &b"new app"[..]), ("mon3d-cli.exe", b"new cli"), ("README.md", b"readme")] {
             z.start_file(format!("solidcraft-9.9.9-windows-x64-portable/{n}"), o).unwrap();
             z.write_all(b).unwrap();
         }
@@ -203,7 +203,7 @@ fn the_portable_zip_swaps_both_executables() {
         run(&r, &InstallKind::WindowsPortable, &Method::PortableZip(exe.clone()), "x86_64", &n, &dir.join("staging"), &Progress::default()).unwrap();
     assert_eq!(out, Outcome::Restart(exe.clone()));
     assert_eq!(std::fs::read(&exe).unwrap(), b"new app");
-    assert_eq!(std::fs::read(dir.join("monsolid-cli.exe")).unwrap(), b"new cli");
+    assert_eq!(std::fs::read(dir.join("mon3d-cli.exe")).unwrap(), b"new cli");
     assert!(!dir.join("staging").join(name).exists(), "the zip is removed");
     // A zip without the app is refused and changes nothing.
     std::fs::write(dir.join("empty.zip"), {
@@ -283,7 +283,7 @@ fn installation_refreshes_the_release_and_verifies_the_final_package() {
     let target = dir.join("SolidCraft.AppImage");
     let name = "solidcraft-linux-x86_64.AppImage";
     let shown = release_with(&[(name, 3), (SUMS, 100)]);
-    let base = "https://github.com/Mandakha1/monsolid/releases/download/v10.0.0/";
+    let base = "https://github.com/Mandakha1/mon3d/releases/download/v10.0.0/";
     let feed = serde_json::json!({
         "tag_name": "v10.0.0",
         "assets": [

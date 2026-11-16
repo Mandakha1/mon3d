@@ -1,6 +1,6 @@
 //! `solvecraft-cli`: the CLI's former name, kept for at least one release so existing scripts
 //! and MCP client setups (`claude mcp add solvecraft -- solvecraft-cli mcp`) keep working.
-//! Compatibility shim: it runs `monsolid-cli` (next to this executable, else on PATH) with the
+//! Compatibility shim: it runs `mon3d-cli` (next to this executable, else on PATH) with the
 //! same arguments and standard streams, after a one-line deprecation note on stderr (stdout
 //! stays clean for MCP's JSON-RPC), and exits with its status.
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
@@ -8,10 +8,10 @@
 
 use std::process::{Command, ExitCode};
 
-const TARGET: &str = "monsolid-cli";
+const TARGET: &str = "mon3d-cli";
 
 fn main() -> ExitCode {
-    solidcraft_engine::note!("solvecraft-cli is deprecated and will be removed in a later release: use monsolid-cli");
+    solidcraft_engine::note!("solvecraft-cli is deprecated and will be removed in a later release: use mon3d-cli");
     let sibling = std::env::current_exe()
         .ok()
         .and_then(|exe| exe.parent().map(|dir| dir.join(format!("{TARGET}{}", std::env::consts::EXE_SUFFIX))))

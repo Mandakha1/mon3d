@@ -1,6 +1,6 @@
-//! `monsolid-cli` on PATH for a macOS app bundle (a DMG install has no installer step): a
+//! `mon3d-cli` on PATH for a macOS app bundle (a DMG install has no installer step): a
 //! symlink in `/opt/homebrew/bin` or `/usr/local/bin` to the CLI inside the bundle, made quietly at
-//! launch when one of them is writable, or from Help > Install monsolid-cli command, which asks
+//! launch when one of them is writable, or from Help > Install mon3d-cli command, which asks
 //! for an administrator password when it must. A file that is not our symlink is never replaced.
 
 use std::path::{Path, PathBuf};
@@ -56,19 +56,19 @@ fn slot(link: &Path) -> Slot {
 
 /// The CLI beside the running app, when the app runs from a bundle.
 fn bundled_cli() -> Option<PathBuf> {
-    let cli = std::env::current_exe().ok()?.parent()?.join("monsolid-cli");
+    let cli = std::env::current_exe().ok()?.parent()?.join("mon3d-cli");
     (cli.is_file() && ours(&cli)).then_some(cli)
 }
 
 fn on_path_elsewhere(path_var: &std::ffi::OsStr, dirs: &[&str]) -> bool {
-    std::env::split_paths(path_var).any(|d| !dirs.iter().any(|x| Path::new(x) == d) && d.join("monsolid-cli").exists())
+    std::env::split_paths(path_var).any(|d| !dirs.iter().any(|x| Path::new(x) == d) && d.join("mon3d-cli").exists())
 }
 
 /// Make the link in `dirs` (the first that takes it). Returns the link made or kept.
 #[cfg(unix)]
 fn link_in(dirs: &[&str], cli: &Path) -> Option<PathBuf> {
     for dir in dirs {
-        let link = Path::new(dir).join("monsolid-cli");
+        let link = Path::new(dir).join("mon3d-cli");
         match plan(&slot(&link), cli) {
             Plan::Keep => return Some(link),
             Plan::Skip => continue,
@@ -92,7 +92,7 @@ fn link_in(_dirs: &[&str], _cli: &Path) -> Option<PathBuf> {
 }
 
 /// At launch: best effort, silent. Does nothing off macOS, outside a bundle, or when
-/// `monsolid-cli` is already on PATH from somewhere else.
+/// `mon3d-cli` is already on PATH from somewhere else.
 pub fn install_on_launch() {
     if !cfg!(target_os = "macos") {
         return;
@@ -104,23 +104,23 @@ pub fn install_on_launch() {
     link_in(DIRS, &cli);
 }
 
-/// Help > Install monsolid-cli command: the same, then with an administrator prompt into
+/// Help > Install mon3d-cli command: the same, then with an administrator prompt into
 /// `/usr/local/bin` when no folder is writable. A message for the status line, and whether it failed.
 pub fn install_from_menu() -> (String, bool) {
     if !cfg!(target_os = "macos") {
-        return ("This is for the macOS app; the other packages put monsolid-cli on PATH themselves.".into(), true);
+        return ("This is for the macOS app; the other packages put mon3d-cli on PATH themselves.".into(), true);
     }
     let Some(cli) = bundled_cli() else {
-        return ("monsolid-cli was not found inside this app.".into(), true);
+        return ("mon3d-cli was not found inside this app.".into(), true);
     };
     if let Some(l) = link_in(DIRS, &cli) {
-        return (format!("monsolid-cli is available as {}", l.display()), false);
+        return (format!("mon3d-cli is available as {}", l.display()), false);
     }
     let Some(script) = admin_script(&cli) else {
         return ("The app's path has characters the installer cannot quote; move SolidCraft to /Applications.".into(), true);
     };
     match std::process::Command::new("osascript").args(["-e", &script]).output() {
-        Ok(o) if o.status.success() => ("monsolid-cli is available as /usr/local/bin/solidcraft-cli".into(), false),
+        Ok(o) if o.status.success() => ("mon3d-cli is available as /usr/local/bin/solidcraft-cli".into(), false),
         Ok(o) => (format!("Not installed: {}", String::from_utf8_lossy(&o.stderr).trim()), true),
         Err(e) => (format!("Not installed: {e}"), true),
     }
@@ -135,7 +135,7 @@ pub fn admin_script(cli: &Path) -> Option<String> {
     }
     // `[ -e ] && ! [ -L ]`: never replace a file that is not a link.
     Some(format!(
-        "do shell script \"mkdir -p /usr/local/bin && if [ -e /usr/local/bin/solidcraft-cli ] && [ ! -L /usr/local/bin/solidcraft-cli ]; then echo 'a file named monsolid-cli is already in /usr/local/bin' >&2; exit 1; fi && ln -sfn '{c}' /usr/local/bin/solidcraft-cli\" with administrator privileges"
+        "do shell script \"mkdir -p /usr/local/bin && if [ -e /usr/local/bin/solidcraft-cli ] && [ ! -L /usr/local/bin/solidcraft-cli ]; then echo 'a file named mon3d-cli is already in /usr/local/bin' >&2; exit 1; fi && ln -sfn '{c}' /usr/local/bin/solidcraft-cli\" with administrator privileges"
     ))
 }
 
@@ -161,7 +161,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn links_only_where_it_may() {
-        let d = std::env::temp_dir().join(format!("monsolid-cli-link-{}", std::process::id()));
+        let d = std::env::temp_dir().join(format!("mon3d-cli-link-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&d);
         let (a, b) = (d.join("a"), d.join("b"));
         std::fs::create_dir_all(&a).unwrap();
@@ -169,23 +169,23 @@ mod tests {
         let cli = Path::new(CLI);
         let dirs = [a.to_str().unwrap(), b.to_str().unwrap()];
         // A file of the user's blocks its folder; the next one gets the link.
-        std::fs::write(a.join("monsolid-cli"), "mine").unwrap();
-        assert_eq!(link_in(&dirs, cli), Some(b.join("monsolid-cli")));
-        assert_eq!(std::fs::read_to_string(a.join("monsolid-cli")).unwrap(), "mine");
-        assert_eq!(std::fs::read_link(b.join("monsolid-cli")).unwrap(), cli);
+        std::fs::write(a.join("mon3d-cli"), "mine").unwrap();
+        assert_eq!(link_in(&dirs, cli), Some(b.join("mon3d-cli")));
+        assert_eq!(std::fs::read_to_string(a.join("mon3d-cli")).unwrap(), "mine");
+        assert_eq!(std::fs::read_link(b.join("mon3d-cli")).unwrap(), cli);
         // A stale link of ours is refreshed.
-        std::fs::remove_file(b.join("monsolid-cli")).unwrap();
-        std::os::unix::fs::symlink("/x/Old.app/Contents/MacOS/solidcraft-cli", b.join("monsolid-cli")).unwrap();
-        assert_eq!(link_in(&dirs[1..], cli), Some(b.join("monsolid-cli")));
-        assert_eq!(std::fs::read_link(b.join("monsolid-cli")).unwrap(), cli);
+        std::fs::remove_file(b.join("mon3d-cli")).unwrap();
+        std::os::unix::fs::symlink("/x/Old.app/Contents/MacOS/solidcraft-cli", b.join("mon3d-cli")).unwrap();
+        assert_eq!(link_in(&dirs[1..], cli), Some(b.join("mon3d-cli")));
+        assert_eq!(std::fs::read_link(b.join("mon3d-cli")).unwrap(), cli);
         let _ = std::fs::remove_dir_all(&d);
     }
 
     #[test]
     fn path_check_ignores_our_own_folders() {
-        let d = std::env::temp_dir().join(format!("monsolid-cli-path-{}", std::process::id()));
+        let d = std::env::temp_dir().join(format!("mon3d-cli-path-{}", std::process::id()));
         std::fs::create_dir_all(&d).unwrap();
-        std::fs::write(d.join("monsolid-cli"), "").unwrap();
+        std::fs::write(d.join("mon3d-cli"), "").unwrap();
         let path = std::env::join_paths([d.as_path()]).unwrap();
         assert!(on_path_elsewhere(&path, &["/opt/homebrew/bin"]));
         assert!(!on_path_elsewhere(&path, &[d.to_str().unwrap()]));

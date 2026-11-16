@@ -92,13 +92,13 @@ pub fn run(app: &mut SolveApp, ctx: &egui::Context, item: &str) {
     }
 }
 
-/// Add SolidCraft's MCP server to the AI assistants installed here (`monsolid-cli mcp setup`),
-/// with the `monsolid-cli` beside this program. One line per client.
+/// Add SolidCraft's MCP server to the AI assistants installed here (`mon3d-cli mcp setup`),
+/// with the `mon3d-cli` beside this program. One line per client.
 #[cfg(not(target_arch = "wasm32"))]
 fn connect_assistants() -> Vec<String> {
     use solidcraft_engine::agent_setup as setup;
     let Some(cli) = crate::agent_chat::find_cli() else {
-        return vec!["monsolid-cli was not found next to SolidCraft; run `monsolid-cli mcp setup` from a terminal.".into()];
+        return vec!["mon3d-cli was not found next to SolidCraft; run `mon3d-cli mcp setup` from a terminal.".into()];
     };
     let cli = cli.canonicalize().unwrap_or(cli).to_string_lossy().trim_start_matches(r"\\?\").to_owned();
     match setup::setup(&[], &setup::Env::from_process(), &cli) {
@@ -125,7 +125,7 @@ fn connect(app: &mut SolveApp, ctx: &egui::Context) {
                 ui_kit::text(
                     ui,
                     solidcraft_ui_text::tr_label(
-                        "Restart each assistant to load the MonSolid server. Each file was backed up as .bak before it changed.",
+                        "Restart each assistant to load the Mon3D server. Each file was backed up as .bak before it changed.",
                     ),
                     ui_kit::Text::Note("connect_note"),
                 );
@@ -158,7 +158,7 @@ pub fn show(app: &mut SolveApp, ctx: &egui::Context, anchor: egui::Pos2) {
                         ("report", "Report an Issue…", "bug_report"),
                         ("crashes", "Crash Reports…", "status_error"),
                         ("connect", "Connect AI assistants…", "settings"),
-                        ("install_cli", "Install monsolid-cli command", "settings"),
+                        ("install_cli", "Install mon3d-cli command", "settings"),
                     ]
                     .into_iter()
                     .filter(|(id, ..)| *id != "install_cli" || cfg!(target_os = "macos"))
@@ -228,7 +228,7 @@ fn about(app: &mut SolveApp, ctx: &egui::Context) {
             ui.horizontal_wrapped(|ui| {
                 ui.label(solidcraft_ui_text::tr("help.based_on"));
                 ui.hyperlink_to("github.com/tangency-labs/solidcraft", crate::brand::UPSTREAM);
-                ui.hyperlink_to("github.com/Mandakha1/monsolid", crate::brand::SOURCE);
+                ui.hyperlink_to("github.com/Mandakha1/mon3d", crate::brand::SOURCE);
             });
             ui.horizontal(|ui| {
                 for link in crate::links::LINKS {

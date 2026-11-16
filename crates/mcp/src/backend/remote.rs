@@ -299,7 +299,7 @@ impl Backend for Remote {
     }
 }
 
-/// `monsolid-cli mcp` with no `--connect`: a headless session while no app runs, which gives
+/// `mon3d-cli mcp` with no `--connect`: a headless session while no app runs, which gives
 /// way to the app the moment one is found, as long as the session has no work of its own yet.
 /// Once it has, it stays headless (the work is not carried over) and every tool result says so.
 pub struct Auto {

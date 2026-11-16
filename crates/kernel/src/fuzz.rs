@@ -1,4 +1,4 @@
-//! Robustness checks on random inputs (`monsolid-cli fuzz`, docs/robustness.md): a small
+//! Robustness checks on random inputs (`mon3d-cli fuzz`, docs/robustness.md): a small
 //! seeded random generator, and the boolean volume identity on random pairs of primitives
 //! placed on a coarse grid, so coincident faces and tangencies come up often.
 

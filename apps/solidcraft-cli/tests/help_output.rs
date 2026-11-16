@@ -51,9 +51,9 @@ const LISTED: &[&str] = &[
     "icon",
 ];
 
-/// The command names a text mentions after `monsolid-cli `, each one only once.
+/// The command names a text mentions after `mon3d-cli `, each one only once.
 fn mentioned(text: &str) -> Vec<&str> {
-    let mut names: Vec<&str> = text.split("monsolid-cli ").skip(1).filter_map(|rest| rest.split_whitespace().next()).collect();
+    let mut names: Vec<&str> = text.split("mon3d-cli ").skip(1).filter_map(|rest| rest.split_whitespace().next()).collect();
     names.sort_unstable();
     names.dedup();
     names
@@ -87,7 +87,7 @@ fn help_prints_usage_and_succeeds() {
         assert!(output.status.success(), "{arg}: {}", String::from_utf8_lossy(&output.stderr));
         let stdout = String::from_utf8_lossy(&output.stdout);
         assert!(stdout.starts_with("usage:"), "{arg}: {stdout}");
-        assert!(stdout.contains("monsolid-cli run"), "{arg}: {stdout}");
+        assert!(stdout.contains("mon3d-cli run"), "{arg}: {stdout}");
         assert!(output.stderr.is_empty(), "{arg}: {}", String::from_utf8_lossy(&output.stderr));
     }
 }
@@ -119,7 +119,7 @@ fn the_top_level_usage_still_lists_every_command() {
     let output = Command::new(env!("CARGO_BIN_EXE_solidcraft-cli")).arg("--help").output().unwrap();
     let stdout = String::from_utf8_lossy(&output.stdout);
     for cmd in LISTED {
-        assert!(stdout.contains(&format!("monsolid-cli {cmd}")), "{cmd}: {stdout}");
+        assert!(stdout.contains(&format!("mon3d-cli {cmd}")), "{cmd}: {stdout}");
     }
 }
 
@@ -185,7 +185,7 @@ fn max_file_size_raises_the_limit_and_refuses_bad_sizes() {
 
     // A sparse design file just over the default 256 MB: refused unread, then read with the flag
     // (and refused for what it holds, which is no design).
-    let dir = std::env::temp_dir().join(format!("monsolid-cli-4086-{}", std::process::id()));
+    let dir = std::env::temp_dir().join(format!("mon3d-cli-4086-{}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
     let path = dir.join("big.solidcraft");
     std::fs::File::create(&path).unwrap().set_len((256 << 20) + 1).unwrap();

@@ -4187,7 +4187,7 @@ fn ends_sketch(id: &str) -> bool {
     solidcraft_engine::find_command(id).is_some_and(|c| c.tab != SKETCH_TAB && SKETCH_ENDING_PANELS.contains(&c.panel) && c.id != "sketch.create")
 }
 
-/// MonSolid's news, courses and offers (`mon_news`): the owner's feed, read when the app starts and
+/// Mon3D's news, courses and offers (`mon_news`): the owner's feed, read when the app starts and
 /// every few hours, shown as a card and (Windows) a notification. Needs the host's HTTPS client, so
 /// tests and the browser build never start it.
 fn news_tick(app: &mut SolveApp, ctx: &egui::Context) {
@@ -4195,7 +4195,7 @@ fn news_tick(app: &mut SolveApp, ctx: &egui::Context) {
         let Some(get) = app.services.http_get.clone() else { return };
         let fetch: mon_news::Fetch = std::sync::Arc::new(move |url: &str| get(url).map_err(|e| e.to_string()));
         app.news = Some(mon_news::News::new(mon_news::Config {
-            product: "monsolid",
+            product: "mon3d",
             app_name: brand::FULL_NAME,
             aumid: brand::AUMID,
             url: mon_news::FEED_URL.into(),

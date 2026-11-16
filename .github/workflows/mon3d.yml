@@ -1,7 +1,7 @@
-# MonSolid CI: build and package for Windows (installer + portable zip), with smoke tests.
+# Mon3D CI: build and package for Windows (installer + portable zip), with smoke tests.
 # Runs on pushes to main, by hand, and on version tags (v*), where it attaches the packages to a
 # DRAFT release: a person reviews and publishes it.
-name: MonSolid
+name: Mon3D
 
 on:
   push:
@@ -23,31 +23,31 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.99.1
       - uses: Swatinem/rust-cache@v2
-      - name: Build monsolid.exe and monsolid-cli.exe
+      - name: Build mon3d.exe and mon3d-cli.exe
         run: cargo build --release --locked -p solidcraft -p solidcraft-cli
       - name: Smoke test (CLI, MCP session)
         shell: pwsh
         run: |
           $bin = "target/release"
-          & "$bin/monsolid-cli.exe" --version
+          & "$bin/mon3d-cli.exe" --version
           $requests = @(
             '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"0"}}}',
             '{"jsonrpc":"2.0","method":"notifications/initialized"}',
             '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}',
             '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"inspect_design","arguments":{}}}'
           ) -join "`n"
-          $out = $requests | & "$bin/monsolid-cli.exe" mcp
+          $out = $requests | & "$bin/mon3d-cli.exe" mcp
           $out | Select-Object -First 3
-          if (-not ($out -match '"name":"monsolid"')) { throw "MCP serverInfo is not MonSolid" }
+          if (-not ($out -match '"name":"mon3d"')) { throw "MCP serverInfo is not Mon3D" }
           if (-not ($out -match '"inspect_design"')) { throw "MCP tools are missing" }
       - name: Launch the app for a few seconds (the runner has no GPU)
         timeout-minutes: 3
         continue-on-error: true
         shell: pwsh
         run: |
-          $p = Start-Process -FilePath "target/release/monsolid.exe" -ArgumentList "--control","7878" -PassThru
+          $p = Start-Process -FilePath "target/release/mon3d.exe" -ArgumentList "--control","7878" -PassThru
           Start-Sleep -Seconds 20
-          if ($p.HasExited) { throw "monsolid.exe exited early with code $($p.ExitCode)" }
+          if ($p.HasExited) { throw "mon3d.exe exited early with code $($p.ExitCode)" }
           Stop-Process -Id $p.Id
       - name: Installer (NSIS) and portable zip
         shell: pwsh
@@ -57,16 +57,16 @@ jobs:
           New-Item -ItemType Directory -Force dist | Out-Null
           $makensis = "C:\Program Files (x86)\NSIS\makensis.exe"
           if (-not (Test-Path $makensis)) { choco install nsis -y --no-progress; if ($LASTEXITCODE -ne 0) { throw "NSIS install failed" } }
-          & $makensis -V2 "-DROOT=$PWD" "-DVERSION=$version" "-DYEAR=$year" "-DBINDIR=$PWD\target\release" "-DOUTFILE=$PWD\dist\monsolid-$year-$version-windows-x64-setup.exe" packaging\monsolid\windows\monsolid.nsi
+          & $makensis -V2 "-DROOT=$PWD" "-DVERSION=$version" "-DYEAR=$year" "-DBINDIR=$PWD\target\release" "-DOUTFILE=$PWD\dist\mon3d-$year-$version-windows-x64-setup.exe" packaging\mon3d\windows\mon3d.nsi
           if ($LASTEXITCODE -ne 0) { throw "makensis failed" }
           # The same installer under a name that stays the same from release to release (download links).
-          Copy-Item "dist\monsolid-$year-$version-windows-x64-setup.exe" "dist\MonSolid-$year-Setup.exe"
-          $stage = "target\monsolid-$year-$version-windows-x64-portable"
+          Copy-Item "dist\mon3d-$year-$version-windows-x64-setup.exe" "dist\Mon3D-$year-Setup.exe"
+          $stage = "target\mon3d-$year-$version-windows-x64-portable"
           New-Item -ItemType Directory -Force $stage | Out-Null
-          Copy-Item target\release\monsolid.exe, target\release\monsolid-cli.exe, LICENSE-APACHE, LICENSE-MIT, LICENSE-BRAND, NOTICE $stage
-          Copy-Item docs\monsolid\INSTALL-mn.md "$stage\README-mn.md"
-          Copy-Item docs\monsolid\AI-mn.md "$stage\AI-guide-mn.md"
-          Compress-Archive -Path $stage -DestinationPath "dist\monsolid-$year-$version-windows-x64-portable.zip"
+          Copy-Item target\release\mon3d.exe, target\release\mon3d-cli.exe, LICENSE-APACHE, LICENSE-MIT, LICENSE-BRAND, NOTICE $stage
+          Copy-Item docs\mon3d\INSTALL-mn.md "$stage\README-mn.md"
+          Copy-Item docs\mon3d\AI-mn.md "$stage\AI-guide-mn.md"
+          Compress-Archive -Path $stage -DestinationPath "dist\mon3d-$year-$version-windows-x64-portable.zip"
           $sums = Get-ChildItem dist\*.exe, dist\*.zip | Get-FileHash -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  $(Split-Path $_.Path -Leaf)" }
           $sums | Out-File -Encoding ascii dist\SHA256SUMS-windows.txt
           $sums
@@ -74,19 +74,19 @@ jobs:
         timeout-minutes: 8
         shell: pwsh
         run: |
-          $setup = Get-ChildItem dist\monsolid-*-setup.exe | Select-Object -First 1
+          $setup = Get-ChildItem dist\mon3d-*-setup.exe | Select-Object -First 1
           Start-Process -FilePath $setup.FullName -ArgumentList "/S" -Wait
-          $dir = "$env:LOCALAPPDATA\Programs\MonSolid"
-          if (-not (Test-Path "$dir\monsolid.exe")) { throw "not installed" }
-          & "$dir\monsolid-cli.exe" --version
+          $dir = "$env:LOCALAPPDATA\Programs\Mon3D"
+          if (-not (Test-Path "$dir\mon3d.exe")) { throw "not installed" }
+          & "$dir\mon3d-cli.exe" --version
           Get-Content "$dir\AI-connect.txt"
-          if (-not (Test-Path "HKCU:\Software\Classes\AppUserModelId\MonHydro.MonSolid")) { throw "notification id not registered" }
+          if (-not (Test-Path "HKCU:\Software\Classes\AppUserModelId\MonHydro.Mon3D")) { throw "notification id not registered" }
           Start-Process -FilePath "$dir\uninstall.exe" -ArgumentList "/S" -Wait
           Start-Sleep -Seconds 3
-          if (Test-Path "$dir\monsolid.exe") { throw "not uninstalled" }
+          if (Test-Path "$dir\mon3d.exe") { throw "not uninstalled" }
       - uses: actions/upload-artifact@v4
         with:
-          name: monsolid-windows-x64
+          name: mon3d-windows-x64
           path: dist/*
 
   release:
@@ -98,9 +98,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: monsolid-windows-x64
+          name: mon3d-windows-x64
           path: dist
       - name: Draft release (publish by hand after review)
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${GITHUB_REF_NAME}" dist/* --repo "${GITHUB_REPOSITORY}" --draft --title "MonSolid 2026 ${GITHUB_REF_NAME}" --notes "MonSolid 2026 ${GITHUB_REF_NAME}, based on SolidCraft by Tangency Labs. See docs/monsolid/INSTALL-mn.md."
+        run: gh release create "${GITHUB_REF_NAME}" dist/* --repo "${GITHUB_REPOSITORY}" --draft --title "Mon3D 2026 ${GITHUB_REF_NAME}" --notes "Mon3D 2026 ${GITHUB_REF_NAME}, based on SolidCraft by Tangency Labs. See docs/mon3d/INSTALL-mn.md."

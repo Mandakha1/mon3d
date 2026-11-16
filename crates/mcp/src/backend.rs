@@ -66,7 +66,7 @@ pub use remote::{Auto, Remote};
 
 /// How a tool error starts when no app listens at the bridged address. The agent reads it, and
 /// `batch` uses it to tell "never sent" from "sent, reply lost".
-pub(crate) const NOT_RUNNING: &str = "no MonSolid app is listening at";
+pub(crate) const NOT_RUNNING: &str = "no Mon3D app is listening at";
 
 /// An in-process headless session (no window); renders with the CPU rasterizer.
 pub struct Headless {
@@ -211,7 +211,7 @@ impl Headless {
                 // A path outside the agent's folders is refused before anything is drawn.
                 solidcraft_engine::io::vfs::check(path).map_err(|e| format!("{path}: {e}"))?;
                 let scene = solidcraft_engine::view::scene_with_guides(s, &cam, s.section, guides).map_err(|e| e.to_string())?;
-                // Drawn on the GPU by the renderer the host installed (`monsolid-cli mcp`).
+                // Drawn on the GPU by the renderer the host installed (`mon3d-cli mcp`).
                 let png = solidcraft_engine::capture::png(&scene, &cam, w, h)?;
                 solidcraft_engine::io::vfs::write(path, &png.bytes).map_err(|e| format!("{path}: {e}"))?;
                 Ok(json!({

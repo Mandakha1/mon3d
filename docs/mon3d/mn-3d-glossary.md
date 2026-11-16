@@ -1,9 +1,9 @@
-# MonSolid (SolidCraft) — Mongolian 3D CAD glossary and rules
+# Mon3D (SolidCraft) — Mongolian 3D CAD glossary and rules
 
 Read `~/moncad/docs/moncad/mn-glossary.md` first (the MonCad 2D glossary): its register, prompt
 patterns, menu words, view names and 2D terms apply here too. This file adds the 3D parametric
 terms and overrides it where they differ. SolidCraft's own English glossary, with a "For
-translators" note per term, is `~/monsolid/docs/book/src/reference/glossary.md`; read the entry
+translators" note per term, is `~/mon3d/docs/book/src/reference/glossary.md`; read the entry
 of any term you are unsure about. The Russian text given beside many rows is a reference for
 meaning only (it is partial and sometimes stale); always translate from the English.
 

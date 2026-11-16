@@ -1,28 +1,28 @@
 //! SolidCraft headless command line.
 //!
 //! ```text
-//! monsolid-cli run <script.json|design.sc|part.step|mesh.3mf> [--in design|part.step|mesh.3mf] [--out FILE]... [--save FILE] [--quiet] [--results] [--timings] [--profile] [--json-out FILE] [--allow-errors]
+//! mon3d-cli run <script.json|design.sc|part.step|mesh.3mf> [--in design|part.step|mesh.3mf] [--out FILE]... [--save FILE] [--quiet] [--results] [--timings] [--profile] [--json-out FILE] [--allow-errors]
 //!                    [--param-check off|warn|strict] [--script-relative]
-//! monsolid-cli eval <script.json|design.sc|part.step> [--in design.sc|part.step] [--json-out FILE] (alias: inspect) measurements as JSON
-//! monsolid-cli script <design.sc> [--out script.json]     the design's history as a command script
-//! monsolid-cli bench-open <design.sc | part.step> [--parse-only] [--save OUT.sc] [--display LEVEL [--edit NAME EXPR]] [--ops script.json] loading timings as JSON lines
-//! monsolid-cli bench-agent [--scale F] [--save F] [--script-out F] a ~1,300-body design built command by command, timed
-//! monsolid-cli bench-assistant --connect 127.0.0.1:PORT [--token T] --base-url URL --model NAME [--tasks 1,2,5] [--repeat N]
+//! mon3d-cli eval <script.json|design.sc|part.step> [--in design.sc|part.step] [--json-out FILE] (alias: inspect) measurements as JSON
+//! mon3d-cli script <design.sc> [--out script.json]     the design's history as a command script
+//! mon3d-cli bench-open <design.sc | part.step> [--parse-only] [--save OUT.sc] [--display LEVEL [--edit NAME EXPR]] [--ops script.json] loading timings as JSON lines
+//! mon3d-cli bench-agent [--scale F] [--save F] [--script-out F] a ~1,300-body design built command by command, timed
+//! mon3d-cli bench-assistant --connect 127.0.0.1:PORT [--token T] --base-url URL --model NAME [--tasks 1,2,5] [--repeat N]
 //!                                 [--timeout-s 300] [--json out.json] [--markdown out.md]
 //!                                                             the standard Assistant model test (#4851) on a running app
-//! monsolid-cli snapshot <script|design> [--in design|part.step] --out shot.png [--width W] [--height H] [--view iso|front|top|…|NAME | --camera JSON] [--no-grid] [--no-axes] [--quality LEVEL]
+//! mon3d-cli snapshot <script|design> [--in design|part.step] --out shot.png [--width W] [--height H] [--view iso|front|top|…|NAME | --camera JSON] [--no-grid] [--no-axes] [--quality LEVEL]
 //!                                                             [--body NAME:opacity=0.3,color=#rrggbb]... [--tool NAME]... [--section z=27]
-//! monsolid-cli exec <command> [json-params]                 run one command on an empty design
-//! monsolid-cli commands                                     the command registry as JSON
-//! monsolid-cli recipe <recipe.json>                         translate an oracle recipe to a script
-//! monsolid-cli oracle <case-dir>...                         replay recipes and compare with expected.json
-//! monsolid-cli kernel-cases [--json] [--dumps=DIR] [--validation=MODE] <case-dir>... the kernel regression rig (tests/kernel-cases)
-//! monsolid-cli mcp [--headless] [--in design|script] [--connect HOST:PORT [--token T]] [--allow-path DIR]... [--allow-any-path] [--require-allow-path]
+//! mon3d-cli exec <command> [json-params]                 run one command on an empty design
+//! mon3d-cli commands                                     the command registry as JSON
+//! mon3d-cli recipe <recipe.json>                         translate an oracle recipe to a script
+//! mon3d-cli oracle <case-dir>...                         replay recipes and compare with expected.json
+//! mon3d-cli kernel-cases [--json] [--dumps=DIR] [--validation=MODE] <case-dir>... the kernel regression rig (tests/kernel-cases)
+//! mon3d-cli mcp [--headless] [--in design|script] [--connect HOST:PORT [--token T]] [--allow-path DIR]... [--allow-any-path] [--require-allow-path]
 //!                    [--param-check off|warn|strict] [--compact]
 //!                                                             MCP server on stdio (docs/mcp.md)
-//! monsolid-cli mcp setup [--dry-run] [--client NAME] [--live] (alias: mcp install) add it to OpenCode, Claude Desktop, Claude Code, Cursor
-//! monsolid-cli licences                                     SolidCraft's licence and the third-party licences
-//! monsolid-cli icon --out F.png|F.ico [--size N]             the app icon (packaging; drawn, not a file)
+//! mon3d-cli mcp setup [--dry-run] [--client NAME] [--live] (alias: mcp install) add it to OpenCode, Claude Desktop, Claude Code, Cursor
+//! mon3d-cli licences                                     SolidCraft's licence and the third-party licences
+//! mon3d-cli icon --out F.png|F.ico [--size N]             the app icon (packaging; drawn, not a file)
 //!
 //! --plugin-limits FILE.json (local sessions only)              user fuel/memory ceilings; connected desktops use their own preferences
 //! --debug (with any command)                                  SolidCraft's debug log on stderr (or RUST_LOG=LEVEL)
@@ -63,50 +63,50 @@ struct Command {
 }
 
 /// `run`'s lines in the usage.
-const USAGE_RUN: &str = "  monsolid-cli run <script.json|design.sc|part.step> [--in design.sc|part.step] [--out FILE]... [--save FILE] [--quiet] [--results] [--timings] [--profile] [--profile-out trace.json] [--json-out FILE] [--allow-errors] [--validation each_step|each_feature|off]\n                     [--param-check off|warn|strict] [--quality standard|fine|finest] [--script-relative]\n  monsolid-cli run --in <design.sc|part.step> [--out FILE]...\n      (a timeline feature that fails fails the run and nothing is written; --allow-errors writes anyway)\n      (--quality: how closely an STL, OBJ or 3MF --out follows curved faces, as file.export's quality: a chord of\n       2e-4, 5e-5 or 1e-5 of each body's size, never under 1 µm, default standard)\n      (--validation: when SMLib's full check runs on the features computed (diagnostics.validation), default each_feature)\n      (--param-check checks each step against its command's contract: warn reports on stderr, strict stops the run)\n      (--script-relative runs command file paths from the positional script's folder; command-line file paths\n       stay relative to the caller's folder, which remains the default for scripts without this option)\n      (--timings prints {timings: [{index, command, ms}], total_ms} for a script, with --results its results too;\n       --profile adds each command's profile: {boolean_ms, tessellate_ms, other_ms}, the kernel's share)\n      (--profile also records where the time goes, SMLib's calls, kernel operations, features, commands and import stages,\n       and prints the table to stderr: count, total, self time and longest per span; --profile-out FILE writes the spans\n       as a Chrome trace for chrome://tracing or ui.perfetto.dev; SOLIDCRAFT_PROFILE=1 does the same for any command)\n";
+const USAGE_RUN: &str = "  mon3d-cli run <script.json|design.sc|part.step> [--in design.sc|part.step] [--out FILE]... [--save FILE] [--quiet] [--results] [--timings] [--profile] [--profile-out trace.json] [--json-out FILE] [--allow-errors] [--validation each_step|each_feature|off]\n                     [--param-check off|warn|strict] [--quality standard|fine|finest] [--script-relative]\n  mon3d-cli run --in <design.sc|part.step> [--out FILE]...\n      (a timeline feature that fails fails the run and nothing is written; --allow-errors writes anyway)\n      (--quality: how closely an STL, OBJ or 3MF --out follows curved faces, as file.export's quality: a chord of\n       2e-4, 5e-5 or 1e-5 of each body's size, never under 1 µm, default standard)\n      (--validation: when SMLib's full check runs on the features computed (diagnostics.validation), default each_feature)\n      (--param-check checks each step against its command's contract: warn reports on stderr, strict stops the run)\n      (--script-relative runs command file paths from the positional script's folder; command-line file paths\n       stay relative to the caller's folder, which remains the default for scripts without this option)\n      (--timings prints {timings: [{index, command, ms}], total_ms} for a script, with --results its results too;\n       --profile adds each command's profile: {boolean_ms, tessellate_ms, other_ms}, the kernel's share)\n      (--profile also records where the time goes, SMLib's calls, kernel operations, features, commands and import stages,\n       and prints the table to stderr: count, total, self time and longest per span; --profile-out FILE writes the spans\n       as a Chrome trace for chrome://tracing or ui.perfetto.dev; SOLIDCRAFT_PROFILE=1 does the same for any command)\n";
 /// `eval`'s lines in the usage.
-const USAGE_EVAL: &str = "  monsolid-cli eval <script.json|design.sc|part.step> [--in design.sc|part.step] [--json-out FILE] [--profile] [--profile-out trace.json] [--validation each_step|each_feature|off]     (alias: inspect)\n  monsolid-cli eval --in <script.json|design.sc|part.step> [--json-out FILE]\n      (with both inputs, runs the positional script on --in before measuring; does not automatically save the modified design)\n      (--json-out FILE writes the JSON that run (with --results, else the measurement) and eval print to FILE instead of stdout,\n       as plain UTF-8: a shell's > can re-encode it, e.g. Windows PowerShell adds a byte-order mark)\n      (--profile, --profile-out and --validation as for run)\n";
+const USAGE_EVAL: &str = "  mon3d-cli eval <script.json|design.sc|part.step> [--in design.sc|part.step] [--json-out FILE] [--profile] [--profile-out trace.json] [--validation each_step|each_feature|off]     (alias: inspect)\n  mon3d-cli eval --in <script.json|design.sc|part.step> [--json-out FILE]\n      (with both inputs, runs the positional script on --in before measuring; does not automatically save the modified design)\n      (--json-out FILE writes the JSON that run (with --results, else the measurement) and eval print to FILE instead of stdout,\n       as plain UTF-8: a shell's > can re-encode it, e.g. Windows PowerShell adds a byte-order mark)\n      (--profile, --profile-out and --validation as for run)\n";
 /// `script`'s lines in the usage.
-const USAGE_SCRIPT: &str = "  monsolid-cli script <design.sc|script.json> [--out script.json]\n      (the design's history as a command script that eval and run replay)\n";
+const USAGE_SCRIPT: &str = "  mon3d-cli script <design.sc|script.json> [--out script.json]\n      (the design's history as a command script that eval and run replay)\n";
 /// `bench-open`'s lines in the usage.
-const USAGE_BENCH_OPEN: &str = "  monsolid-cli bench-open <design.sc | part.step> [--parse-only] [--save OUT.sc] [--display LEVEL [--edit NAME EXPR]] [--ops script.json] [--profile] [--profile-out trace.json]\n      (--profile and --profile-out as for run)\n      (--ops: after opening, run each command of the script and undo it, timing the command, the\n       evaluations it caused and the view it leaves: placing and meshing what changed)\n";
+const USAGE_BENCH_OPEN: &str = "  mon3d-cli bench-open <design.sc | part.step> [--parse-only] [--save OUT.sc] [--display LEVEL [--edit NAME EXPR]] [--ops script.json] [--profile] [--profile-out trace.json]\n      (--profile and --profile-out as for run)\n      (--ops: after opening, run each command of the script and undo it, timing the command, the\n       evaluations it caused and the view it leaves: placing and meshing what changed)\n";
 /// `bench-agent`'s lines in the usage.
-const USAGE_BENCH_AGENT: &str = "  monsolid-cli bench-agent [--scale F] [--save design.sc] [--script-out script.json]\n";
+const USAGE_BENCH_AGENT: &str = "  mon3d-cli bench-agent [--scale F] [--save design.sc] [--script-out script.json]\n";
 /// `bench-assistant`'s lines in the usage.
-const USAGE_BENCH_ASSISTANT: &str = "  monsolid-cli bench-assistant --connect 127.0.0.1:PORT [--token T] --base-url URL --model NAME [--tasks 1,2,5] [--repeat N] [--timeout-s 300] [--json out.json] [--markdown out.md]\n";
+const USAGE_BENCH_ASSISTANT: &str = "  mon3d-cli bench-assistant --connect 127.0.0.1:PORT [--token T] --base-url URL --model NAME [--tasks 1,2,5] [--repeat N] [--timeout-s 300] [--json out.json] [--markdown out.md]\n";
 /// `snapshot`'s lines in the usage.
-const USAGE_SNAPSHOT: &str = "  monsolid-cli snapshot <script|design> [--in design.sc|part.step] --out shot.png [--width W] [--height H] [--view NAME | --camera JSON] [--no-grid] [--no-axes]\n      [--body NAME:opacity=0.3,color=#rrggbb]... [--tool NAME]... [--section z=27] [--quality coarse|normal|fine|ultra]\n  monsolid-cli snapshot --in <design.sc|part.step> --out shot.png ...\n      (as with run, --in starts from a design and the script runs on top of it; an option snapshot doesn't take is an error;\n       --view: iso, front, back, top, bottom, left, right, or the name of a view saved in the design with view.save;\n       --camera: {target: [x,y,z], yaw, pitch, distance, fov?} in mm and radians, as the MCP screenshot takes it (docs/mcp.md);\n       --no-grid and --no-axes leave the ground grid (on Z 0) and the origin's axes out of the picture;\n       --body: how one body is drawn, as appearance.assign takes it: opacity 0-1 (below 1 is see-through, so what is inside\n         it shows) and color #rrggbb, either or both, once per body;\n       --tool: draw this body solid in the tool colour and every other body see-through, so a cut's or a join's tool body\n         is visible inside the material it meets; a later --body overrides it;\n       --section: cut the model as inspect.section does, so the inside shows: z=27 (the plane through that world\n         coordinate, keeping the smaller side), add ,flip to keep the other side, or XY, XZ, YZ, or its own JSON;\n       --quality: the display quality the bodies are meshed at, as the app's setting (default normal))\n";
+const USAGE_SNAPSHOT: &str = "  mon3d-cli snapshot <script|design> [--in design.sc|part.step] --out shot.png [--width W] [--height H] [--view NAME | --camera JSON] [--no-grid] [--no-axes]\n      [--body NAME:opacity=0.3,color=#rrggbb]... [--tool NAME]... [--section z=27] [--quality coarse|normal|fine|ultra]\n  mon3d-cli snapshot --in <design.sc|part.step> --out shot.png ...\n      (as with run, --in starts from a design and the script runs on top of it; an option snapshot doesn't take is an error;\n       --view: iso, front, back, top, bottom, left, right, or the name of a view saved in the design with view.save;\n       --camera: {target: [x,y,z], yaw, pitch, distance, fov?} in mm and radians, as the MCP screenshot takes it (docs/mcp.md);\n       --no-grid and --no-axes leave the ground grid (on Z 0) and the origin's axes out of the picture;\n       --body: how one body is drawn, as appearance.assign takes it: opacity 0-1 (below 1 is see-through, so what is inside\n         it shows) and color #rrggbb, either or both, once per body;\n       --tool: draw this body solid in the tool colour and every other body see-through, so a cut's or a join's tool body\n         is visible inside the material it meets; a later --body overrides it;\n       --section: cut the model as inspect.section does, so the inside shows: z=27 (the plane through that world\n         coordinate, keeping the smaller side), add ,flip to keep the other side, or XY, XZ, YZ, or its own JSON;\n       --quality: the display quality the bodies are meshed at, as the app's setting (default normal))\n";
 /// `render`'s lines in the usage.
-const USAGE_RENDER: &str = "  monsolid-cli render <script|design> --out image.png [--setup NAME] [--width W] [--height H] [--transparent] [--overwrite] [--timeout SECONDS]\n      [--progressive] [--samples N] [--max-depth N] [--seed N] [--exposure EV] [--lighting FILE.json] [--environment FILE.json] [--tone-map reinhard|aces_fitted] [--legacy-memory-admission]\n      --legacy-memory-admission skips available-RAM checks; fixed shared/host budgets and allocation limits still apply.\n";
+const USAGE_RENDER: &str = "  mon3d-cli render <script|design> --out image.png [--setup NAME] [--width W] [--height H] [--transparent] [--overwrite] [--timeout SECONDS]\n      [--progressive] [--samples N] [--max-depth N] [--seed N] [--exposure EV] [--lighting FILE.json] [--environment FILE.json] [--tone-map reinhard|aces_fitted] [--legacy-memory-admission]\n      --legacy-memory-admission skips available-RAM checks; fixed shared/host budgets and allocation limits still apply.\n";
 /// `exec`'s lines in the usage.
-const USAGE_EXEC: &str = "  monsolid-cli exec <command> [json-params]\n";
+const USAGE_EXEC: &str = "  mon3d-cli exec <command> [json-params]\n";
 /// `commands`'s lines in the usage.
-const USAGE_COMMANDS: &str = "  monsolid-cli commands\n";
+const USAGE_COMMANDS: &str = "  mon3d-cli commands\n";
 /// `recipe`'s lines in the usage.
-const USAGE_RECIPE: &str = "  monsolid-cli recipe <recipe.json>\n";
+const USAGE_RECIPE: &str = "  mon3d-cli recipe <recipe.json>\n";
 /// `oracle`'s lines in the usage.
-const USAGE_ORACLE: &str = "  monsolid-cli oracle <case-dir>... [--json]\n";
+const USAGE_ORACLE: &str = "  mon3d-cli oracle <case-dir>... [--json]\n";
 /// `kernel-cases`'s lines in the usage.
-const USAGE_KERNEL_CASES: &str = "  monsolid-cli kernel-cases <case-dir>... [--json] [--dumps=DIR] [--export=DIR] [--validation=each_step|each_feature|off]\n      (the kernel regression rig, tests/kernel-cases, on SMLib; --dumps: each case's\n       failing SMLib calls leave their inputs for replay in DIR/<area>-<case>; --export: each case's\n       kernel operations, input records and expected values for solidcore's rig, in DIR/<area>/<case>.json; --validation: when SMLib's\n       full check runs (diagnostics.validation), default each_feature)\n";
+const USAGE_KERNEL_CASES: &str = "  mon3d-cli kernel-cases <case-dir>... [--json] [--dumps=DIR] [--export=DIR] [--validation=each_step|each_feature|off]\n      (the kernel regression rig, tests/kernel-cases, on SMLib; --dumps: each case's\n       failing SMLib calls leave their inputs for replay in DIR/<area>-<case>; --export: each case's\n       kernel operations, input records and expected values for solidcore's rig, in DIR/<area>/<case>.json; --validation: when SMLib's\n       full check runs (diagnostics.validation), default each_feature)\n";
 /// `fuzz`'s lines in the usage.
 const USAGE_FUZZ: &str =
-    "  monsolid-cli fuzz [--from N] [--count N] [--jobs J] [--timeout S] [--steps N] [--minimise] [--out DIR] [--report FILE]\n";
+    "  mon3d-cli fuzz [--from N] [--count N] [--jobs J] [--timeout S] [--steps N] [--minimise] [--out DIR] [--report FILE]\n";
 /// `mcp`'s lines in the usage.
-const USAGE_MCP: &str = "  monsolid-cli mcp [--headless] [--in design.sc|script.json] [--connect 127.0.0.1:PORT [--token T]] [--allow-path DIR]... [--allow-any-path] [--require-allow-path]\n                     [--param-check off|warn|strict] [--render-gpu] [--compact]\n      (--compact, SOLIDCRAFT_MCP_COMPACT=1 or the app's Preferences › AI (with --connect): compact tool output for\n       agents: inspect_design summarises sketches and takes `sketches` by name and a `bodies` filter, and tool JSON\n       is not pretty-printed; off by default)\n  monsolid-cli mcp setup [--dry-run] [--client opencode|claude-desktop|claude-code|cursor] [--live]\n      (adds a `solidcraft` server, with this program's path, to each installed AI client; --live adds `solidcraft-live` for the running app; alias: mcp install)\n";
+const USAGE_MCP: &str = "  mon3d-cli mcp [--headless] [--in design.sc|script.json] [--connect 127.0.0.1:PORT [--token T]] [--allow-path DIR]... [--allow-any-path] [--require-allow-path]\n                     [--param-check off|warn|strict] [--render-gpu] [--compact]\n      (--compact, SOLIDCRAFT_MCP_COMPACT=1 or the app's Preferences › AI (with --connect): compact tool output for\n       agents: inspect_design summarises sketches and takes `sketches` by name and a `bodies` filter, and tool JSON\n       is not pretty-printed; off by default)\n  mon3d-cli mcp setup [--dry-run] [--client opencode|claude-desktop|claude-code|cursor] [--live]\n      (adds a `solidcraft` server, with this program's path, to each installed AI client; --live adds `solidcraft-live` for the running app; alias: mcp install)\n";
 /// `crashes`'s lines in the usage.
-const USAGE_CRASHES: &str = "  monsolid-cli crashes [list [--json] | show <id> | replay <id> | dir | clear [<id>]]\n";
+const USAGE_CRASHES: &str = "  mon3d-cli crashes [list [--json] | show <id> | replay <id> | dir | clear [<id>]]\n";
 /// `licences`'s lines in the usage.
-const USAGE_LICENCES: &str = "  monsolid-cli licences\n";
+const USAGE_LICENCES: &str = "  mon3d-cli licences\n";
 /// `gpu`'s lines in the usage.
-const USAGE_GPU: &str = "  monsolid-cli gpu [--policy auto|hardware|software|cpu]\n      (the GPU adapters a headless render can open, best first, the one the policy picks and the tier it\n       lands on: gpu, gpu-software, or the CPU rasterizer (auto with no adapter, or cpu); the policy defaults\n       to SOLIDCRAFT_GPU, else auto; exits with an error when hardware or software finds no such adapter)\n";
+const USAGE_GPU: &str = "  mon3d-cli gpu [--policy auto|hardware|software|cpu]\n      (the GPU adapters a headless render can open, best first, the one the policy picks and the tier it\n       lands on: gpu, gpu-software, or the CPU rasterizer (auto with no adapter, or cpu); the policy defaults\n       to SOLIDCRAFT_GPU, else auto; exits with an error when hardware or software finds no such adapter)\n";
 /// `icon`'s lines in the usage.
-const USAGE_ICON: &str = "  monsolid-cli icon --out icon.png [--size 256] | --out icon.ico\n";
+const USAGE_ICON: &str = "  mon3d-cli icon --out icon.png [--size 256] | --out icon.ico\n";
 /// `fuzz-one`'s lines in the usage: a seed and the flags of one fuzz run.
-const USAGE_FUZZ_ONE: &str = "  monsolid-cli fuzz-one <seed> [--steps N] [--minimise]\n";
+const USAGE_FUZZ_ONE: &str = "  mon3d-cli fuzz-one <seed> [--steps N] [--minimise]\n";
 /// `bench-edit`'s lines in the usage: the parameter a script changes.
-const USAGE_BENCH_EDIT: &str = "  monsolid-cli bench-edit <script.json|recipe.json> <param> <expr>\n";
+const USAGE_BENCH_EDIT: &str = "  mon3d-cli bench-edit <script.json|recipe.json> <param> <expr>\n";
 /// `save-stress`'s lines in the usage: the file saved over and over.
-const USAGE_SAVE_STRESS: &str = "  monsolid-cli save-stress <path> <rounds>\n";
+const USAGE_SAVE_STRESS: &str = "  mon3d-cli save-stress <path> <rounds>\n";
 /// The flags every command takes, at the end of the top-level usage.
 const USAGE_DEBUG: &str = "  --debug, with any command: what SolidCraft logs (why a body has no display plan, why a save left its\n      model cache out), on stderr; RUST_LOG=error|warn|info|debug|trace sets one level for every crate\n  --max-file-size SIZE, with any command: read STEP and import files and design files up to SIZE for this run\n      (for example 2GB or 1500MB; at most 16GB; the defaults are 512 MB and 256 MB, and a smaller SIZE keeps them)\n";
 
@@ -223,7 +223,7 @@ fn main() -> ExitCode {
         // The standard Assistant model test (#4851), run against a desktop app over its control channel.
         Some("bench-assistant") => bench_assistant::run(&args[1..]),
         Some("--version" | "-V") => {
-            println!("monsolid-cli {}", env!("CARGO_PKG_VERSION"));
+            println!("mon3d-cli {}", env!("CARGO_PKG_VERSION"));
             Ok(())
         }
         // Asked-for help is not an error: usage on stdout, exit 0.
@@ -720,7 +720,7 @@ fn timeline_ok(s: &Session, skip_newer_features: bool) -> Result<(), String> {
     ))
 }
 
-/// Runs `monsolid-cli eval` (and its `inspect` alias), opening the input design or script with the requested `--validation` mode and reporting both `inspect.measure` and `document.inspect`.
+/// Runs `mon3d-cli eval` (and its `inspect` alias), opening the input design or script with the requested `--validation` mode and reporting both `inspect.measure` and `document.inspect`.
 fn cmd_eval(args: &[String]) -> Result<(), String> {
     let json_out = json_out(args)?;
     known_args("eval", args, &["--in", "--json-out", "--profile-out", "--validation"], &["--profile"], true)?;
@@ -766,7 +766,7 @@ fn cmd_gpu(args: &[String]) -> Result<(), String> {
     let policy = match args {
         [] => solidcraft_gpu::env::policy()?,
         [flag, v] if flag == "--policy" => Policy::parse(v).ok_or_else(|| format!("--policy must be auto, hardware, software or cpu, not `{v}`"))?,
-        _ => return Err("usage: monsolid-cli gpu [--policy auto|hardware|software|cpu]".into()),
+        _ => return Err("usage: mon3d-cli gpu [--policy auto|hardware|software|cpu]".into()),
     };
     let s = survey(policy);
     let chosen = s.chosen.and_then(|i| s.adapters.get(i)).cloned();
@@ -1058,7 +1058,7 @@ fn discover_app() -> Option<u16> {
 /// parameter `save_round` set to the round number each time.
 fn cmd_save_stress(args: &[String]) -> Result<(), String> {
     let (Some(path), Some(rounds)) = (args.first(), args.get(1).and_then(|n| n.parse::<u64>().ok())) else {
-        return Err("usage: monsolid-cli save-stress <path> <rounds>".into());
+        return Err("usage: mon3d-cli save-stress <path> <rounds>".into());
     };
     let mut s = Session::default();
     let filler = (0..3000).map(|i| solidcraft_engine::doc::Param {
@@ -1080,7 +1080,7 @@ fn cmd_save_stress(args: &[String]) -> Result<(), String> {
 /// parameter edit, setting it back, undo and redo (ms and features recomputed each).
 fn cmd_bench_edit(args: &[String]) -> Result<(), String> {
     let (Some(path), Some(param), Some(expr)) = (args.first(), args.get(1), args.get(2)) else {
-        return Err("usage: monsolid-cli bench-edit <script.json|recipe.json> <param> <expr>".into());
+        return Err("usage: mon3d-cli bench-edit <script.json|recipe.json> <param> <expr>".into());
     };
     let v = read_json(path)?;
     let script = if v.get("features").is_some() { recipe::to_script(&v)? } else { v };
@@ -1138,7 +1138,7 @@ fn bench_ops(mut s: Session, script: &str) -> Result<Session, String> {
 
 /// Separate file reading, JSON decoding/repair, timeline evaluation and display meshing.
 pub(crate) fn cmd_bench_open(args: &[String]) -> Result<(), String> {
-    let path = args.first().ok_or("usage: monsolid-cli bench-open <design.sc | part.step> [--parse-only]")?;
+    let path = args.first().ok_or("usage: mon3d-cli bench-open <design.sc | part.step> [--parse-only]")?;
     let t = std::time::Instant::now();
     let step = solidcraft_engine::io::is_step_path(path);
     let kind = if step { solidcraft_engine::io::limits::Kind::Step } else { solidcraft_engine::io::limits::Kind::Design };
