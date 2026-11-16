@@ -46,8 +46,9 @@ fn is_release_url(url: &str) -> bool {
     RELEASE_PREFIXES.iter().any(|p| url.starts_with(p))
 }
 
-/// MonSolid checks for updates by itself only once it publishes releases (Check now always works).
-pub const AUTOMATIC_CHECKS: bool = false;
+/// MonSolid checks Mandakha1/monsolid for updates by itself (on since its first published release,
+/// v0.43.0 "MonSolid 2026"); Check now always works.
+pub const AUTOMATIC_CHECKS: bool = true;
 /// While the app stays open, automatic checks run once a day (every start checks too).
 pub const CHECK_INTERVAL_S: f64 = 24.0 * 3600.0;
 /// Remind me later hides the button for three days.
