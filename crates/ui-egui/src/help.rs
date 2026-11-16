@@ -125,7 +125,7 @@ fn connect(app: &mut SolveApp, ctx: &egui::Context) {
                 ui_kit::text(
                     ui,
                     solidcraft_ui_text::tr_label(
-                        "Restart each assistant to load the SolidCraft server. Each file was backed up as .bak before it changed.",
+                        "Restart each assistant to load the MonSolid server. Each file was backed up as .bak before it changed.",
                     ),
                     ui_kit::Text::Note("connect_note"),
                 );

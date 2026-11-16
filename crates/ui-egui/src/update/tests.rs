@@ -101,7 +101,7 @@ fn install_kinds_are_told_apart() {
 fn portable_windows_layout_is_recognised() {
     let exe = PathBuf::from("/portable/solidcraft.exe");
     let get = |k: &str| (k == "ProgramFiles").then(|| "C:\\Program Files".to_string());
-    let exists = |p: &Path| p == Path::new("/portable/solidcraft-cli.exe");
+    let exists = |p: &Path| p == Path::new("/portable/monsolid-cli.exe");
     assert_eq!(
         detect(&Probe { os: "windows", release_build: true, env: &get, exe: Some(exe), exists: &exists, msi_dir: None }),
         InstallKind::WindowsPortable
@@ -158,11 +158,11 @@ fn release() -> Release {
     ];
     let assets: Vec<Value> = names
         .iter()
-        .map(|n| json!({"name": n, "size": 10, "browser_download_url": format!("https://github.com/bherbruck/solidcraft/releases/download/v0.10.0/{n}")}))
+        .map(|n| json!({"name": n, "size": 10, "browser_download_url": format!("https://github.com/mandakha1/monsolid/releases/download/v0.10.0/{n}")}))
         .collect();
     let body = json!({
         "tag_name": "v0.10.0", "name": "SolidCraft v0.10.0", "body": "**What's new**\n\n- Surface tools.",
-        "html_url": "https://github.com/bherbruck/solidcraft/releases/tag/v0.10.0", "draft": false, "prerelease": false, "assets": assets,
+        "html_url": "https://github.com/mandakha1/monsolid/releases/tag/v0.10.0", "draft": false, "prerelease": false, "assets": assets,
     });
     Release::parse(body.to_string().as_bytes()).unwrap()
 }
@@ -188,14 +188,14 @@ fn each_installation_gets_its_own_file() {
     // Download: the file, or the page when there is none or a package manager updates it.
     assert_eq!(
         r.download_url(&InstallKind::WindowsMsi, "x86_64"),
-        "https://github.com/bherbruck/solidcraft/releases/download/v0.10.0/solidcraft-windows-x64.msi"
+        "https://github.com/mandakha1/monsolid/releases/download/v0.10.0/solidcraft-windows-x64.msi"
     );
-    assert_eq!(r.download_url(&InstallKind::Other, "x86_64"), "https://github.com/bherbruck/solidcraft/releases/tag/v0.10.0");
+    assert_eq!(r.download_url(&InstallKind::Other, "x86_64"), "https://github.com/mandakha1/monsolid/releases/tag/v0.10.0");
     assert_eq!(r.download_url(&InstallKind::Flatpak(APP_ID.into()), "x86_64"), r.page);
     assert_eq!(r.download_url(&InstallKind::Snap { store: true }, "x86_64"), r.page);
     assert_eq!(
         r.download_url(&InstallKind::Snap { store: false }, "x86_64"),
-        "https://github.com/bherbruck/solidcraft/releases/download/v0.10.0/solidcraft-linux-x86_64.snap"
+        "https://github.com/mandakha1/monsolid/releases/download/v0.10.0/solidcraft-linux-x86_64.snap"
     );
     assert_eq!(
         InstallKind::Snap { store: false }.update_command(Some("solidcraft-linux-x86_64.snap")).as_deref(),
@@ -222,7 +222,7 @@ fn release_answers_are_checked() {
     let r = Release::parse(
         json!({"tag_name": "v1.0.0", "html_url": "https://evil.example/x", "assets": [
             {"name": "solidcraft-windows-x64.msi", "browser_download_url": "https://evil.example/a.msi"},
-            {"name": "solidcraft-windows-x86.msi", "browser_download_url": "https://github.com/bherbruck/solidcraft/releases/download/v1.0.0/solidcraft-windows-x86.msi"},
+            {"name": "solidcraft-windows-x86.msi", "browser_download_url": "https://github.com/mandakha1/monsolid/releases/download/v1.0.0/solidcraft-windows-x86.msi"},
         ]})
         .to_string()
         .as_bytes(),
@@ -317,7 +317,7 @@ fn next_release_feed(dir: &Path) -> (PathBuf, String) {
         "tag_name": format!("v{v}"),
         "name": format!("SolidCraft {v}"),
         "body": "## What's new\n\n- Faster rebuilds.",
-        "html_url": format!("https://github.com/bherbruck/solidcraft/releases/tag/v{v}"),
+        "html_url": format!("https://github.com/mandakha1/monsolid/releases/tag/v{v}"),
         "assets": []
     });
     std::fs::write(&path, body.to_string()).unwrap();
@@ -595,7 +595,7 @@ fn the_memo_survives_with_the_preferences() {
 
 #[test]
 fn release_notes_read_as_markdown() {
-    let md = "## What's new\n\n**Why 0.10:** a minor\nbump.\n\n- **Surface tools.** Revolve and `monsolid-cli mcp`\n  continued ([#925](https://x/925)).\n  - nested\n* Fix by @a in https://github.com/bherbruck/solidcraft/pull/1064\n\nSee https://example.com/x.";
+    let md = "## What's new\n\n**Why 0.10:** a minor\nbump.\n\n- **Surface tools.** Revolve and `monsolid-cli mcp`\n  continued ([#925](https://x/925)).\n  - nested\n* Fix by @a in https://github.com/mandakha1/monsolid/pull/1064\n\nSee https://example.com/x.";
     let b = parse_markdown(md);
     assert_eq!(b.first(), Some(&Block::Heading(vec![Span::Text("What's new".into())])));
     assert_eq!(b.get(1), Some(&Block::Paragraph(vec![Span::Strong("Why 0.10:".into()), Span::Text(" a minor bump.".into())])));
@@ -620,7 +620,7 @@ fn release_notes_read_as_markdown() {
             0,
             vec![
                 Span::Text("Fix by @a in ".into()),
-                Span::Link { text: "#1064".into(), url: Some("https://github.com/bherbruck/solidcraft/pull/1064".into()) }
+                Span::Link { text: "#1064".into(), url: Some("https://github.com/mandakha1/monsolid/pull/1064".into()) }
             ]
         ))
     );
@@ -686,32 +686,32 @@ fn releases_under_either_owner_are_accepted() {
         )
         .unwrap()
     };
-    for owner in ["bherbruck/solidcraft", "tangency-labs/solidcraft"] {
+    for owner in ["mandakha1/monsolid", "Mandakha1/monsolid"] {
         let r = parse(owner);
         assert_eq!(r.page, format!("https://github.com/{owner}/releases/tag/v1.0.0"));
         assert_eq!(r.assets.len(), 1, "{owner}");
     }
     // Any other owner, repository, host or scheme is dropped.
-    for owner in ["evil/solidcraft", "tangency-labs/solidcraft-evil", "tangency-labs.evil/solidcraft", "bherbruck/other"] {
+    for owner in ["evil/solidcraft", "Mandakha1/monsolid-evil", "tangency-labs.evil/solidcraft", "bherbruck/other"] {
         let r = parse(owner);
         assert_eq!(r.page, RELEASES_PAGE, "{owner}");
         assert!(r.assets.is_empty(), "{owner}");
     }
-    assert!(!is_release_url("http://github.com/tangency-labs/solidcraft/releases/x"));
-    assert!(!is_release_url("https://github.com.evil.example/tangency-labs/solidcraft/releases/x"));
-    assert!(!is_release_url("https://github.com/tangency-labs/solidcraft/issues/1"));
+    assert!(!is_release_url("http://github.com/Mandakha1/monsolid/releases/x"));
+    assert!(!is_release_url("https://github.com.evil.example/Mandakha1/monsolid/releases/x"));
+    assert!(!is_release_url("https://github.com/Mandakha1/monsolid/issues/1"));
 }
 
 #[test]
 fn the_version_links_to_its_release_notes() {
     // A release build opens the page of its own release; stable, candidate and nightly tags all exist.
     for v in ["0.17.0", "0.21.0-rc.2", "0.20.0-nightly.20261023.69.1"] {
-        assert_eq!(release_notes_url(v, true), format!("https://github.com/tangency-labs/solidcraft/releases/tag/v{v}"));
+        assert_eq!(release_notes_url(v, true), format!("https://github.com/Mandakha1/monsolid/releases/tag/v{v}"));
     }
     // A development build has no release of its own: the release history, which is what the issue asks for.
-    assert_eq!(release_notes_url("0.17.0", false), "https://github.com/tangency-labs/solidcraft/releases");
+    assert_eq!(release_notes_url("0.17.0", false), "https://github.com/Mandakha1/monsolid/releases");
     // Anything that is not a version never ends up in a URL.
-    assert_eq!(release_notes_url("0.1/../../x", true), "https://github.com/tangency-labs/solidcraft/releases");
+    assert_eq!(release_notes_url("0.1/../../x", true), "https://github.com/Mandakha1/monsolid/releases");
 }
 
 #[test]
@@ -992,8 +992,8 @@ fn install_selection_refreshes_the_button_and_progress_before_completion() {
     h.app.services.http_get = Some(Arc::new(move |url| {
         if url == LATEST_API {
             return Ok(json!({"tag_name":"v999.1.0", "assets":[
-                {"name": name, "browser_download_url":format!("https://github.com/tangency-labs/solidcraft/releases/download/v999.1.0/{name}")},
-                {"name": install::SUMS, "browser_download_url":"https://github.com/tangency-labs/solidcraft/releases/download/v999.1.0/SHA256SUMS.txt"}
+                {"name": name, "browser_download_url":format!("https://github.com/Mandakha1/monsolid/releases/download/v999.1.0/{name}")},
+                {"name": install::SUMS, "browser_download_url":"https://github.com/Mandakha1/monsolid/releases/download/v999.1.0/SHA256SUMS.txt"}
             ]}).to_string().into_bytes());
         }
         Ok(format!("{}  {name}\n", "a".repeat(64)).into_bytes())
@@ -1038,8 +1038,8 @@ fn cancel_download_leaves_downloading_immediately() {
     h.app.services.http_get = Some(Arc::new(move |url| {
         if url == LATEST_API {
             return Ok(json!({"tag_name":"v999.1.0", "assets":[
-                {"name": name, "browser_download_url":format!("https://github.com/tangency-labs/solidcraft/releases/download/v999.1.0/{name}")},
-                {"name": install::SUMS, "browser_download_url":"https://github.com/tangency-labs/solidcraft/releases/download/v999.1.0/SHA256SUMS.txt"}
+                {"name": name, "browser_download_url":format!("https://github.com/Mandakha1/monsolid/releases/download/v999.1.0/{name}")},
+                {"name": install::SUMS, "browser_download_url":"https://github.com/Mandakha1/monsolid/releases/download/v999.1.0/SHA256SUMS.txt"}
             ]}).to_string().into_bytes());
         }
         // Stall checksum GET until the test ends so Cancel has to work before the body download.
