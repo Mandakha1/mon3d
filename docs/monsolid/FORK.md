@@ -26,8 +26,10 @@ Unchanged on purpose: the `.sc` design format and its `solidcraft/N` tag (files 
 ## Licence
 
 The geometry code is MIT OR Apache-2.0. `crates/ui-kit`, `crates/look`, `crates/theme` and the brand
-assets are under LICENSE-BRAND: distributing MonSolid builds that contain them needs the SolidCraft
-maintainers' written permission (section 3). Ask before any public release.
+assets are under LICENSE-BRAND: distributing builds that contain them needs the SolidCraft
+maintainers' written permission (section 3). The project owner decided on 2026-11-16 to distribute
+MonSolid and keeps that permission. Every package ships LICENSE-MIT, LICENSE-APACHE, LICENSE-BRAND and
+NOTICE, and About and the download page credit SolidCraft and Tangency Labs.
 
 ## Merging upstream
 
