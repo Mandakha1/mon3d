@@ -65,6 +65,11 @@ pub fn run(app: &mut SolveApp, ctx: &egui::Context, item: &str) {
                 news.open_list();
             }
         }
+        "account" => {
+            if let Some(account) = &mut app.account {
+                account.panel_open = true;
+            }
+        }
         "version" => {
             ctx.open_url(egui::OpenUrl::new_tab(crate::update::release_notes_url(crate::update::current_version(), crate::update::release_build())))
         }
@@ -153,6 +158,7 @@ pub fn show(app: &mut SolveApp, ctx: &egui::Context, anchor: egui::Pos2) {
                         ("about", "About SolidCraft", "help"),
                         ("updates", solidcraft_ui_text::tr("update.check_for_updates"), "update"),
                         ("news", if solidcraft_ui_text::language() == "mn" { "Мэдээ, сургалт…" } else { "News and courses…" }, "list"),
+                        ("account", if solidcraft_ui_text::language() == "mn" { "Бүртгэл…" } else { "Account…" }, "settings"),
                         ("shortcuts", "Keyboard Shortcuts", "list"),
                         ("messages", "Messages…", "list"),
                         ("report", "Report an Issue…", "bug_report"),

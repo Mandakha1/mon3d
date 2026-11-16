@@ -744,6 +744,7 @@ fn services(cc: &eframe::CreationContext<'_>, folder: &DialogFolder) -> Services
         #[cfg(not(any(target_os = "windows", target_os = "macos")))]
         reduce_transparency: None,
         http_get: Some(std::sync::Arc::new(http_get)),
+        account_get: Some(std::sync::Arc::new(http_get)),
         http_download: Some(std::sync::Arc::new(http_download)),
         // Already an installed app: only the browser build offers to install.
         install_app: None,

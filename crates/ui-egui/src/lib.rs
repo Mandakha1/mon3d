@@ -529,6 +529,9 @@ pub struct Services {
     pub graphics_adapters: Vec<(String, String)>,
     /// HTTPS GET for the update check (`update`); None: never check (browser, tests).
     pub http_get: Option<update::HttpGet>,
+    /// HTTPS GET for the monhydro.com sign-in (`mon_account`); None: no sign-in window
+    /// (browser, tests). Only the desktop app sets it.
+    pub account_get: Option<update::HttpGet>,
     /// HTTPS download to a file, with progress, for one-click updates (`update::install`).
     pub http_download: Option<update::install::HttpDownload>,
     /// The browser's offer to install the web app (`install`); None: no Install button (desktop).
@@ -697,6 +700,8 @@ pub struct SolveApp {
     pub updater: update::Updater,
     /// News, courses and offers (`mon_news`), started once the host has a network client.
     pub news: Option<mon_news::News>,
+    /// Gmail sign-in and install registration at monhydro.com (`mon_account`), started with the news.
+    pub account: Option<mon_account::Account>,
     /// Safari's steps for installing the web app, while their window is open (`install`).
     pub install_steps: Option<install::Steps>,
     /// Toolbar buttons the user pinned, removed or reordered.
@@ -1024,6 +1029,7 @@ impl SolveApp {
             crashes: crash_ui::CrashUi::default(),
             updater: update::Updater::default(),
             news: None,
+            account: None,
             install_steps: None,
             toolbar_custom: toolbar_custom::ToolbarCustom::default(),
             settings_profiles: settings_profiles::Profiles::default(),
@@ -4205,5 +4211,20 @@ fn news_tick(app: &mut SolveApp, ctx: &egui::Context) {
     }
     if let Some(news) = &mut app.news {
         news.show(ctx, solidcraft_ui_text::language());
+    }
+    // Gmail sign-in (owner's decision 2026-11-16: required once, on the first start; offline after).
+    if app.account.is_none() {
+        let Some(get) = app.services.account_get.clone() else { return };
+        let fetch: mon_account::Fetch = std::sync::Arc::new(move |url: &str| get(url).map_err(|e| e.to_string()));
+        app.account = Some(mon_account::Account::new(mon_account::Config {
+            product: "mon3d",
+            app_name: brand::FULL_NAME,
+            version: env!("CARGO_PKG_VERSION"),
+            store_dir: solidcraft_engine::recovery::data_dir(),
+            fetch: Some(fetch),
+        }));
+    }
+    if let Some(account) = &mut app.account {
+        account.show(ctx, solidcraft_ui_text::language());
     }
 }
