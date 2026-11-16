@@ -27,6 +27,7 @@ static JAPANESE: Catalog = Catalog::new("ja", "日本語", include_str!(concat!(
 static GEORGIAN: Catalog = Catalog::new("ka", "ქართული", include_str!(concat!(env!("OUT_DIR"), "/locales/ka.json")));
 static KOREAN: Catalog = Catalog::new("ko", "한국어", include_str!(concat!(env!("OUT_DIR"), "/locales/ko.json")));
 static LATVIAN: Catalog = Catalog::new("lv", "Latviešu", include_str!(concat!(env!("OUT_DIR"), "/locales/lv.json")));
+static MONGOLIAN: Catalog = Catalog::new("mn", "Монгол", include_str!(concat!(env!("OUT_DIR"), "/locales/mn.json")));
 static MALAY: Catalog = Catalog::new("ms", "Bahasa Melayu", include_str!(concat!(env!("OUT_DIR"), "/locales/ms.json")));
 static NORWEGIAN: Catalog = Catalog::new("nb", "Norsk bokmål", include_str!(concat!(env!("OUT_DIR"), "/locales/nb.json")));
 static DUTCH: Catalog = Catalog::new("nl", "Nederlands", include_str!(concat!(env!("OUT_DIR"), "/locales/nl.json")));
@@ -67,6 +68,7 @@ pub const LOCALES: &[&Catalog] = &[
     &GEORGIAN,
     &KOREAN,
     &LATVIAN,
+    &MONGOLIAN,
     &MALAY,
     &NORWEGIAN,
     &DUTCH,
@@ -681,7 +683,7 @@ mod tests {
     /// are complete; every English key must be present. Other catalogs are partial:
     /// gaps fall back to English and `cargo xtask i18n` reports them without failing.
     /// New labels still require German and Korean under the contributor policy.
-    const COMPLETE: &[&str] = &["ar", "he", "ja", "vi", "zh"];
+    const COMPLETE: &[&str] = &["ar", "he", "ja", "mn", "vi", "zh"];
 
     /// `text()` falls back to English silently, so a message a complete locale never received is
     /// shown in English inside an otherwise translated UI, with nothing in the build to say so.
