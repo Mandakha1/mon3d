@@ -1,6 +1,6 @@
-//! Original SolidCraft mark, shared by desktop, packaging and CLI: the borderless mark, five
-//! faces with transparent gaps between them, drawn from the macOS icon's
-//! `macos/source/SolidCraft.icon/Assets/03-solid-blue-cutout.svg`.
+//! The MonSolid mark, shared by desktop, packaging and CLI: an isometric cube in the colours of
+//! the Mongolian flag (red, blue, red) with a Soyombo-gold top, three faces with transparent gaps
+//! between them. MonSolid's own artwork; it replaces SolidCraft's mark in this fork.
 type P = (f32, f32);
 
 /// One face in that SVG's units: its outline, and its linear gradient from one point and
@@ -11,41 +11,29 @@ struct Face {
     to: (P, [u8; 3]),
 }
 
-const FACES: [Face; 5] = [
-    // Inner side of the upper step.
+const FACES: [Face; 3] = [
+    // Left face: the flag's red.
     Face {
-        outline: &[(547.883, 282.66), (709.797, 188.211), (709.797, 375.985)],
-        from: ((619.14, 179.734), [29, 99, 198]),
-        to: ((694.687, 396.761), [21, 73, 158]),
+        outline: &[(160.100, 318.040), (503.900, 516.680), (503.900, 913.960), (160.100, 715.320)],
+        from: ((152.0, 304.0), [218, 41, 58]),
+        to: ((512.0, 928.0), [158, 18, 36]),
     },
-    // Top of the lower step.
+    // Right face: the flag's blue.
     Face {
-        outline: &[(727.797, 593.626), (727.797, 407.136), (889.571, 500.381)],
-        from: ((619.14, 413.244), [69, 159, 255]),
-        to: ((790.839, 605.547), [35, 121, 231]),
+        outline: &[(520.100, 516.680), (863.900, 318.040), (863.900, 715.320), (520.100, 913.960)],
+        from: ((512.0, 512.0), [18, 110, 196]),
+        to: ((872.0, 720.0), [0, 62, 128]),
     },
-    // Right face, with the recess.
+    // Top: the Soyombo gold.
     Face {
-        outline: &[(530.0, 521.17), (691.797, 427.912), (691.797, 655.928), (907.594, 531.545), (907.594, 740.159), (530.0, 957.8)],
-        from: ((632.876, 399.508), [27, 102, 207]),
-        to: ((783.971, 968.175), [18, 69, 150]),
-    },
-    // Left face, stepped.
-    Face {
-        outline: &[(116.406, 510.769), (116.406, 303.529), (494.0, 521.17), (494.0, 957.8), (314.203, 854.167), (314.203, 624.777)],
-        from: ((207.063, 303.357), [37, 141, 245]),
-        to: ((426.837, 968.175), [20, 97, 218]),
-    },
-    // Top of the extruded profile.
-    Face {
-        outline: &[(134.374, 272.334), (512.0, 53.364), (691.828, 157.015), (476.117, 282.846), (673.752, 396.761), (512.0, 489.993)],
-        from: ((385.63, 53.364), [81, 173, 255]),
-        to: ((522.989, 510.769), [43, 131, 241]),
+        outline: &[(512.000, 105.360), (855.800, 304.000), (512.000, 502.640), (168.200, 304.000)],
+        from: ((152.0, 304.0), [252, 212, 40]),
+        to: ((872.0, 304.0), [226, 160, 0]),
     },
 ];
 
 /// The mark's extent in SVG units: left, top, width, height.
-const BOUNDS: (f32, f32, f32, f32) = (116.406, 53.364, 791.188, 904.436);
+const BOUNDS: (f32, f32, f32, f32) = (160.100, 105.360, 703.800, 808.600);
 
 /// This block is the icon image data
 pub fn rgba(size: usize) -> Result<Vec<u8>, String> {
@@ -118,30 +106,30 @@ pub fn rgba(size: usize) -> Result<Vec<u8>, String> {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn shared_mark_has_transparency_and_original_colors_at_window_and_package_sizes() {
+    fn shared_mark_has_transparency_and_its_colours_at_window_and_package_sizes() {
         for size in [16, 24, 32, 48, 64, 128, 256] {
             let pixels = super::rgba(size).expect("valid size");
             assert_eq!(pixels.len(), size * size * 4);
             assert!(pixels.as_chunks::<4>().0.iter().any(|p| p[3] == 0));
-            assert!(pixels.as_chunks::<4>().0.iter().any(|p| p[3] == 255 && p[2] > p[0]));
+            assert!(pixels.as_chunks::<4>().0.iter().any(|p| p[3] == 255 && p[2] > p[0]), "the blue face");
+            assert!(pixels.as_chunks::<4>().0.iter().any(|p| p[3] == 255 && p[0] > p[2] + 100 && p[1] < 80), "the red face");
         }
         assert!(super::rgba(0).is_err());
         assert!(super::rgba(2049).is_err());
     }
 
-    /// Borderless: no white edge lines, and the gaps between faces are see-through. At 256 px
-    /// the gap between the left and right faces (SVG x 494..530) is transparent on the row
-    /// through the middle of the mark, and no opaque pixel is white.
+    /// Borderless: the seam between the left and right faces (the cube's front edge, x 512) is
+    /// see-through on the row through the middle of the mark, with a face on each side.
     #[test]
     fn shared_mark_is_borderless() {
         let size = 256;
         let pixels = super::rgba(size).expect("valid size");
         let px = |x: usize, y: usize| pixels.as_chunks::<4>().0[y * size + x];
-        let s = size as f32 / 904.436;
-        let gap_x = ((size as f32 - 791.188 * s) / 2.0 + (512.0 - 116.406) * s) as usize;
-        let row = ((750.0 - 53.364) * s) as usize;
+        let (bx, by, bw, bh) = super::BOUNDS;
+        let s = size as f32 / bh;
+        let gap_x = ((size as f32 - bw * s) / 2.0 + (512.0 - bx) * s) as usize;
+        let row = ((720.0 - by) * s) as usize;
         assert_eq!(px(gap_x, row)[3], 0, "the seam between the left and right faces is a gap");
         assert!(px(gap_x - 8, row)[3] == 255 && px(gap_x + 8, row)[3] == 255, "faces on both sides of the gap");
-        assert!(pixels.as_chunks::<4>().0.iter().all(|p| p[3] == 0 || p[0] < 200), "no white edges");
     }
 }

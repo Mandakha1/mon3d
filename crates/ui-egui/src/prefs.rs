@@ -1088,9 +1088,9 @@ preference_settings! {
     dialog_first_letter_buttons: bool = false, PAGE_GENERAL => check_id("prefs.dialog_first_letter_buttons");
     /// The Donate button (Ko-fi) at the status bar's right end. The button's × turns it off; the Help
     /// menu, About and the start page keep their link.
-    show_donate_button: bool = true, PAGE_GENERAL => check_id("prefs.show_donate_button");
+    show_donate_button: bool = false, PAGE_GENERAL => check_id("prefs.show_donate_button");
     /// The Discord button at the status bar's right end; the × on it turns it off.
-    show_discord_button: bool = true, PAGE_GENERAL => check_id("prefs.show_discord_button");
+    show_discord_button: bool = false, PAGE_GENERAL => check_id("prefs.show_discord_button");
     /// View orientation widget: original signed axes (default) or a custom body.
     navigator_style: NavigatorStyle = NavigatorStyle::default(), PAGE_NAVIGATION;
     /// The custom view gizmo's colours: the theme's (themed) or the body's own (modeled).
@@ -1714,7 +1714,7 @@ preference_settings! {
     /// Custom instructions (#8220): text the agent chat adds to its system note when a session
     /// starts (`agent_chat::acp::system_note`). No page reset discards this user-authored text.
     agent_instructions: String = String::new();
-    /// Compact output for agents connected through the MCP server (`solidcraft-cli mcp`, docs/mcp.md):
+    /// Compact output for agents connected through the MCP server (`monsolid-cli mcp`, docs/mcp.md):
     /// `inspect_design` summarises sketches and tool JSON is not pretty-printed. Off: as always.
     /// The server asks once per agent session (`mcp.options`), so a change applies to the next one.
     mcp_compact: bool = false, PAGE_ASSISTANT;

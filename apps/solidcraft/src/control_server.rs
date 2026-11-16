@@ -114,7 +114,7 @@ pub fn start(listen_on: auth::Listen, ctx: egui::Context) -> Result<control_swit
     if matches!(listen_on, auth::Listen::Default) {
         solidcraft_engine::note!("solidcraft: control channel on the default port 127.0.0.1:{port} (Preferences > Assistant turns it off)");
     }
-    // The discovery file: where `solidcraft-cli mcp` finds this app with no arguments.
+    // The discovery file: where `monsolid-cli mcp` finds this app with no arguments.
     match APP.write_current_port(port) {
         Ok(_) => {
             if let Ok(mut p) = APP_PORT.lock() {

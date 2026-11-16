@@ -156,7 +156,7 @@ pub fn tool_definitions_with(opts: Options) -> Vec<Value> {
                         "items": {"type": "object", "properties": {"command": {"type": "string"}, "params": {"type": "object"}}, "required": ["command"]},
                     },
                     "path": string("Instead of `commands`: a JSON file holding the steps, an array or {\"commands\": [...]} (as \
-                     `solidcraft-cli run` takes and `solidcraft-cli script` writes), read by this server within the folders the \
+                     `monsolid-cli run` takes and `monsolid-cli script` writes), read by this server within the folders the \
                      agent may use; the steps run as if they had been sent here"),
                     "rollback": {"type": "boolean", "description": "Undo completed steps when one fails (default true)"},
                     "coalesce_parameters": {"type": "boolean", "description": "Set each run of consecutive plain parameter edits (parameters.change or set_parameter with a name and a value, or changes) together, rebuilding the design once for the run instead of once per edit; a run that is refused goes step by step, naming the refused step. Other steps still see the design up to date. Each step keeps its own result; the run is one undo step (default false)"},
@@ -343,8 +343,8 @@ pub fn tool_definitions_with(opts: Options) -> Vec<Value> {
             "SolidCraft's crash reports on this computer (the app's when connected to it). Without `id`: the list, newest \
              first (id, kind, time, message, command, count, version, path, replayable). With `id`: the whole report: \
              message, location, backtrace, app version and commit, system, the command that crashed and the recent ones, \
-             and design_path / replay_path when it can be replayed: `solidcraft-cli crashes replay <id>`, or \
-             `solidcraft-cli run <replay_path> --in <design_path>`. Reports never leave this computer.",
+             and design_path / replay_path when it can be replayed: `monsolid-cli crashes replay <id>`, or \
+             `monsolid-cli run <replay_path> --in <design_path>`. Reports never leave this computer.",
             object(
                 json!({
                     "id": string("A report id from the list"),

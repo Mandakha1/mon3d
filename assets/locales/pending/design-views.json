@@ -78,5 +78,15 @@
     "cmd.tab.view.open": "打开其他视图",
     "cmd.tab.view.rename": "重命名视图",
     "cmd.tab.view.reopen": "重新打开已关闭的视图"
+  },
+  "mn": {
+    "cmd.tab.view.activate": "Харагдацыг харуулах",
+    "cmd.tab.view.close": "Харагдацыг хаах",
+    "cmd.tab.view.duplicate": "Харагдацыг хувилах",
+    "cmd.tab.view.list": "Харагдацуудын жагсаалт",
+    "cmd.tab.view.move": "Харагдацыг зөөх",
+    "cmd.tab.view.open": "Өөр харагдац нээх",
+    "cmd.tab.view.rename": "Харагдацын нэрийг өөрчлөх",
+    "cmd.tab.view.reopen": "Хаасан харагдацыг дахин нээх"
   }
 }

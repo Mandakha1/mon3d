@@ -22,7 +22,7 @@ use crate::tools::{call_tool_with, tool_definitions_with};
 /// version-neutral (no workaround for a quirk of the current kernel or solver: those belong in
 /// `skills/solidcraft-modeling/reference.md`, which `skill_reference` serves per release), and
 /// `tests::instructions_name_only_real_tools` checks every tool and command id it names.
-const INSTRUCTIONS: &str = "SolidCraft is an independent parametric 3D CAD app, and these tools drive it: when its window is \
+const INSTRUCTIONS: &str = "MonSolid (a Mongolian/English edition of SolidCraft) is an independent parametric 3D CAD app, and these tools drive it: when its window is \
 open the user watches the model appear, otherwise a headless session builds it. When asked to design or build a part, do it \
 with these tools straight away. Units are millimetres and degrees in expressions, Z is up.\n\n\
 Start: for anything beyond one primitive, call `skill_reference {\"skill\":\"solidcraft-modeling\"}` first (command shapes, \
@@ -194,17 +194,17 @@ pub struct Server {
 
 impl Server {
     pub fn new(backend: Box<dyn Backend>) -> Self {
-        let info = Info { name: "solidcraft", title: "SolidCraft", version: env!("CARGO_PKG_VERSION"), max_line: solidcraft_engine::MAX_LINE };
+        let info = Info { name: "monsolid", title: "MonSolid", version: env!("CARGO_PKG_VERSION"), max_line: solidcraft_engine::MAX_LINE };
         let agent = Agent { backend, scope: None, options: Options::default(), app_options: None, listed: Options::default() };
         Self { inner: solidcraft_mcp_server::Server::new(info, agent) }
     }
-    /// Confine the files tool calls may reach to `scope` (`None`: anywhere). `solidcraft-cli mcp`
+    /// Confine the files tool calls may reach to `scope` (`None`: anywhere). `monsolid-cli mcp`
     /// always sets one unless started with `--allow-any-path` (docs/mcp.md).
     pub fn with_path_scope(mut self, scope: Option<PathScope>) -> Self {
         self.inner.tools().scope = scope;
         self
     }
-    /// Shape tool output with `options` (default: as always; `solidcraft-cli mcp --compact` or
+    /// Shape tool output with `options` (default: as always; `monsolid-cli mcp --compact` or
     /// `SOLIDCRAFT_MCP_COMPACT=1` turn on compact output, docs/mcp.md). The app's Preferences can
     /// turn an option on too ([`Server::options`]).
     pub fn with_options(mut self, options: Options) -> Self {

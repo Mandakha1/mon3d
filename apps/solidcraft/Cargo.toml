@@ -5,7 +5,11 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 publish = false
-default-run = "solidcraft"
+default-run = "monsolid"
+
+[[bin]]
+name = "monsolid"
+path = "src/main.rs"
 
 [features]
 default = ["raytrace-cpu", "bundled-render-library", "profile"]

@@ -151,14 +151,14 @@ pub fn initialize_params(version: &str) -> Value {
             "auth": {"terminal": true},
             "_meta": {"terminal-auth": true},
         },
-        "clientInfo": {"name": "solidcraft", "title": "SolidCraft", "version": version},
+        "clientInfo": {"name": "monsolid", "title": "MonSolid", "version": version},
     })
 }
 
 /// The name the chat gives its MCP server (#2592): not `solidcraft`, the name docs/mcp.md suggests
 /// for a user's own setup, so an agent that merges its own MCP servers with the session's (Codex
 /// keeps its own entry on a clash) can't shadow the bridge with a headless session.
-pub const BRIDGE_NAME: &str = "solidcraft-app";
+pub const BRIDGE_NAME: &str = "monsolid-app";
 
 /// Whether a permission question is about a tool of the chat's own MCP server, whose calls
 /// SolidCraft's gate checks. The agent writes both values and ACP has nothing better to go on, so
@@ -173,7 +173,7 @@ pub fn is_bridge_tool(title: &str, kind: Option<&str>) -> bool {
     named && matches!(kind, None | Some("other"))
 }
 
-/// The MCP server the agent starts to reach the design: `solidcraft-cli mcp --connect` bridged to
+/// The MCP server the agent starts to reach the design: `monsolid-cli mcp --connect` bridged to
 /// this app's control port. The server finds the port's token in the token file the app wrote
 /// (docs/control-protocol.md), so the token never travels through the agent, and it keeps its
 /// default folder limits (docs/mcp.md): no `--allow-any-path`.
@@ -753,8 +753,8 @@ mod tests {
             "",
             "solidcraft",
             "SolidCraft",
-            "run solidcraft-cli; ls",
-            "solidcraft-cli --version",
+            "run monsolid-cli; ls",
+            "monsolid-cli --version",
             "Edit ~/.local/share/solidcraft/agent-chat/work/notes.txt",
             // A user's own MCP server (docs/mcp.md), which SolidCraft's gate doesn't see.
             "mcp__solidcraft__batch",
@@ -857,13 +857,13 @@ mod tests {
 
         let wsl = |p: &str| wsl_path(std::path::Path::new(p)).to_string_lossy().into_owned();
         assert_eq!(wsl(r"C:\Users\u\AppData\Local\SolidCraft\agent-chat\work"), "/mnt/c/Users/u/AppData/Local/SolidCraft/agent-chat/work");
-        assert_eq!(wsl(r"\\?\D:\Program Files\SolidCraft\solidcraft-cli.exe"), "/mnt/d/Program Files/SolidCraft/solidcraft-cli.exe");
+        assert_eq!(wsl(r"\\?\D:\Program Files\SolidCraft\monsolid-cli.exe"), "/mnt/d/Program Files/SolidCraft/solidcraft-cli.exe");
         assert_eq!(wsl("E:/designs"), "/mnt/e/designs");
         assert_eq!(wsl("C:"), "/mnt/c/");
         assert_eq!(wsl("/home/u/designs"), "/home/u/designs");
         assert_eq!(wsl(r"\\server\share\x"), r"\\server\share\x");
 
-        let b = McpBridge { cli: r"C:\Program Files\SolidCraft\solidcraft-cli.exe".into(), port: 41234 };
+        let b = McpBridge { cli: r"C:\Program Files\SolidCraft\monsolid-cli.exe".into(), port: 41234 };
         let p = session_new_params(&wsl_path(std::path::Path::new(r"C:\Users\u\work")), Some(&b.in_wsl()), &json!({}), SYSTEM_NOTE);
         assert_eq!(p["cwd"], "/mnt/c/Users/u/work");
         assert_eq!(p["mcpServers"][0]["command"], "/mnt/c/Program Files/SolidCraft/solidcraft-cli.exe");

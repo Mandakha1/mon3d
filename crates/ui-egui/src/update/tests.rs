@@ -79,7 +79,7 @@ fn install_kinds_are_told_apart() {
     // "C:\Program Files Extra" is not under "C:\Program Files".
     assert_eq!(probe("windows", true, &pf, "C:\\Program Files Extra\\solidcraft.exe", &[]), InstallKind::WindowsExe);
     let portable = "C:\\Users\\me\\solidcraft-0.10.0-windows-x64-portable\\solidcraft.exe";
-    let cli = "C:\\Users\\me\\solidcraft-0.10.0-windows-x64-portable\\solidcraft-cli.exe";
+    let cli = "C:\\Users\\me\\solidcraft-0.10.0-windows-x64-portable\\monsolid-cli.exe";
     // Path::parent splits on `\` only on Windows; this test describes the layout either way.
     if cfg!(windows) {
         assert_eq!(probe("windows", true, &pf, portable, &[cli]), InstallKind::WindowsPortable);
@@ -108,7 +108,7 @@ fn portable_windows_layout_is_recognised() {
     );
 }
 
-/// #1870: the installer's wizard can put SolidCraft anywhere, and it puts solidcraft-cli.exe
+/// #1870: the installer's wizard can put SolidCraft anywhere, and it puts monsolid-cli.exe
 /// beside it as the portable zip does. The folder it recorded is what tells its copy apart.
 #[test]
 fn an_msi_install_outside_program_files_is_recognised() {
@@ -118,7 +118,7 @@ fn an_msi_install_outside_program_files_is_recognised() {
         "ProgramFiles(x86)" => Some(r"C:\Program Files (x86)".to_string()),
         _ => None,
     };
-    // solidcraft-cli.exe is beside it.
+    // monsolid-cli.exe is beside it.
     let exists = |_: &Path| true;
     let kind = |msi_dir: Option<&str>| {
         detect(&Probe { os: "windows", release_build: true, env: &get, exe: Some(exe.clone()), exists: &exists, msi_dir: msi_dir.map(PathBuf::from) })
@@ -595,7 +595,7 @@ fn the_memo_survives_with_the_preferences() {
 
 #[test]
 fn release_notes_read_as_markdown() {
-    let md = "## What's new\n\n**Why 0.10:** a minor\nbump.\n\n- **Surface tools.** Revolve and `solidcraft-cli mcp`\n  continued ([#925](https://x/925)).\n  - nested\n* Fix by @a in https://github.com/bherbruck/solidcraft/pull/1064\n\nSee https://example.com/x.";
+    let md = "## What's new\n\n**Why 0.10:** a minor\nbump.\n\n- **Surface tools.** Revolve and `monsolid-cli mcp`\n  continued ([#925](https://x/925)).\n  - nested\n* Fix by @a in https://github.com/bherbruck/solidcraft/pull/1064\n\nSee https://example.com/x.";
     let b = parse_markdown(md);
     assert_eq!(b.first(), Some(&Block::Heading(vec![Span::Text("What's new".into())])));
     assert_eq!(b.get(1), Some(&Block::Paragraph(vec![Span::Strong("Why 0.10:".into()), Span::Text(" a minor bump.".into())])));
@@ -606,7 +606,7 @@ fn release_notes_read_as_markdown() {
             vec![
                 Span::Strong("Surface tools.".into()),
                 Span::Text(" Revolve and ".into()),
-                Span::Code("solidcraft-cli mcp".into()),
+                Span::Code("monsolid-cli mcp".into()),
                 Span::Text(" continued (".into()),
                 Span::Link { text: "#925".into(), url: Some("https://x/925".into()) },
                 Span::Text(").".into()),

@@ -528,7 +528,7 @@ pub struct AgentChat {
     /// in. The next message tells it when the design is no longer that one (#10854).
     seen: Option<Revision>,
     tools_available: Option<bool>,
-    /// The agent was started with SolidCraft's tools (solidcraft-cli and the control port were
+    /// The agent was started with SolidCraft's tools (monsolid-cli and the control port were
     /// both there): if they are still unavailable, they failed to start, not to be found.
     tools_bridged: bool,
     /// The latest completed turn's notice; older notices remain in the transcript.
@@ -731,13 +731,13 @@ impl AgentChat {
     pub fn state(&self) -> State {
         self.state.unwrap_or(State::Off)
     }
-    /// The agent is ready but was started without SolidCraft's tools (no `solidcraft-cli` was
+    /// The agent is ready but was started without SolidCraft's tools (no `monsolid-cli` was
     /// found, or no control port), so no reply can read or change the design (#12283).
     pub(crate) fn without_design(&self) -> bool {
         self.state() == State::Ready && self.tools_available == Some(false)
     }
     /// Why [`Self::without_design`], and what to do about it: the chat's endpoint did not start,
-    /// `solidcraft-cli` was not found (as the notice `connect` posts says), or it was found but
+    /// `monsolid-cli` was not found (as the notice `connect` posts says), or it was found but
     /// its tools did not start (an endpoint agent whose MCP start failed; the error is in the chat).
     pub(crate) fn no_design_hint(&self) -> &'static str {
         if self.tools_port.is_none() {
@@ -1144,10 +1144,10 @@ pub(crate) fn assistant_tip(app: &SolveApp, mark: AssistantMark) -> String {
     }
 }
 
-/// `solidcraft-cli` next to this program, else on the search path.
+/// `monsolid-cli` next to this program, else on the search path.
 #[cfg(not(target_arch = "wasm32"))]
 pub(crate) fn find_cli() -> Option<std::path::PathBuf> {
-    let name = if cfg!(windows) { "solidcraft-cli.exe" } else { "solidcraft-cli" };
+    let name = if cfg!(windows) { "monsolid-cli.exe" } else { "monsolid-cli" };
     if let Some(p) = solidcraft_engine::geom::env::var("CLI").map(std::path::PathBuf::from).filter(|p| p.is_file()) {
         return Some(p);
     }
@@ -1155,7 +1155,7 @@ pub(crate) fn find_cli() -> Option<std::path::PathBuf> {
         .ok()
         .and_then(|e| e.parent().map(|d| d.join(name)))
         .filter(|p| p.is_file())
-        .or_else(|| discover::find_in("solidcraft-cli", &discover::search_dirs()))
+        .or_else(|| discover::find_in("monsolid-cli", &discover::search_dirs()))
 }
 
 /// The agent's working folder: an empty folder of SolidCraft's own, so an agent's own file tools

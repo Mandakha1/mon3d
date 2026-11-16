@@ -248,7 +248,7 @@ impl eframe::App for App {
             if self.frames == 2 {
                 mark("app up");
                 solidcraft_engine::crash::phase(solidcraft_engine::crash::RUNNING);
-                // A DMG install has no installer step: put solidcraft-cli on PATH, quietly.
+                // A DMG install has no installer step: put monsolid-cli on PATH, quietly.
                 #[cfg(target_os = "macos")]
                 std::thread::spawn(solidcraft_ui_egui::cli_link::install_on_launch);
                 // Automation runs (a control port was asked for) leave the user's AI apps alone.
@@ -710,9 +710,9 @@ fn services(cc: &eframe::CreationContext<'_>, folder: &DialogFolder) -> Services
             let dialog = save_folder.start(parent.clone()).set_file_name(name);
             let dialog = if exts == [io::DESIGN_EXT, "json"] {
                 if name.ends_with(".json") {
-                    dialog.add_filter("Plain JSON design", &["json"]).add_filter("SolidCraft container", &[io::DESIGN_EXT])
+                    dialog.add_filter("Plain JSON design", &["json"]).add_filter("MonSolid design", &[io::DESIGN_EXT])
                 } else {
-                    dialog.add_filter("SolidCraft container", &[io::DESIGN_EXT]).add_filter("Plain JSON design", &["json"])
+                    dialog.add_filter("MonSolid design", &[io::DESIGN_EXT]).add_filter("Plain JSON design", &["json"])
                 }
             } else {
                 dialog.add_filter("File", exts)
@@ -824,7 +824,7 @@ fn agent_http(r: &solidcraft_ui_egui::agent_chat::backend::HttpRequest) -> Resul
         .http_status_as_error(false)
         .timeout_global(Some(Duration::from_secs(r.timeout_s.clamp(1, 3600))))
         .timeout_connect(Some(Duration::from_secs(10)))
-        .user_agent("SolidCraft")
+        .user_agent("MonSolid")
         .max_redirects(0)
         .build()
         .into();
@@ -865,12 +865,12 @@ fn easyprint_upload(name: &str, bytes: Vec<u8>, done: std::sync::mpsc::Sender<Re
     });
 }
 
-/// API keys in the system keychain (service "SolidCraft agent chat", one entry per agent).
+/// API keys in the system keychain (service "MonSolid agent chat", one entry per agent).
 struct Keychain;
 
 impl Keychain {
     fn entry(id: &str) -> Result<keyring::Entry, String> {
-        keyring::Entry::new("SolidCraft agent chat", id).map_err(|e| e.to_string())
+        keyring::Entry::new("MonSolid agent chat", id).map_err(|e| e.to_string())
     }
 }
 
@@ -907,7 +907,7 @@ fn http_call(url: &str, timeout: std::time::Duration) -> Result<ureq::http::Resp
         .http_status_as_error(false)
         .timeout_global(Some(timeout))
         .timeout_connect(Some(Duration::from_secs(5)))
-        .user_agent("SolidCraft-update-check")
+        .user_agent("MonSolid-update-check")
         .max_redirects(3)
         .build()
         .into();
@@ -933,7 +933,7 @@ fn http_call(url: &str, timeout: std::time::Duration) -> Result<ureq::http::Resp
 /// The per-user settings folder: eframe's storage (`app.ron`) and the anti-aliasing preference.
 fn settings_dir() -> Result<Option<std::path::PathBuf>, String> {
     let selected = std::env::var_os("SOLIDCRAFT_SETTINGS_DIR");
-    startup::settings_directory(selected.as_deref(), eframe::storage_dir("SolidCraft"))
+    startup::settings_directory(selected.as_deref(), eframe::storage_dir("MonSolid"))
 }
 
 /// The anti-aliasing preference, kept next to eframe's storage (it is needed before the
@@ -1074,7 +1074,7 @@ fn app_viewport(custom_titlebar: bool) -> Result<egui::ViewportBuilder, eframe::
     #[cfg(not(target_os = "macos"))]
     let icon =
         egui::IconData { rgba: app_icon::rgba(64).map_err(|e| eframe::Error::AppCreation(std::io::Error::other(e).into()))?, width: 64, height: 64 };
-    Ok(solidcraft_ui_egui::window_chrome::viewport("SolidCraft", APP_ID, custom_titlebar).with_icon(icon))
+    Ok(solidcraft_ui_egui::window_chrome::viewport(solidcraft_ui_egui::brand::FULL_NAME, APP_ID, custom_titlebar).with_icon(icon))
 }
 
 /// The window's app id: it names the desktop entry, so it is the packages' reverse-DNS id.
@@ -1094,7 +1094,7 @@ impl Drop for DriverClient {
 
 fn main() -> eframe::Result {
     #[cfg(target_os = "macos")]
-    objc2_foundation::NSProcessInfo::processInfo().setProcessName(objc2_foundation::ns_string!("SolidCraft"));
+    objc2_foundation::NSProcessInfo::processInfo().setProcessName(objc2_foundation::ns_string!("MonSolid"));
     mark("main");
     solidcraft_ui_egui::i18n::install();
     solidcraft_look::install_tables();
@@ -1145,7 +1145,7 @@ fn main() -> eframe::Result {
                         for r in solidcraft_engine::crash::list(&dir).iter().take(5) {
                             println!("  {}  {}  {}", r.id, r.kind, r.message);
                         }
-                        println!("more: solidcraft-cli crashes");
+                        println!("more: monsolid-cli crashes");
                     }
                     None => println!("no crash folder on this system"),
                 }
@@ -1308,7 +1308,7 @@ fn main() -> eframe::Result {
     let _driver_client = DriverClient;
     mark("run_native");
     let result = eframe::run_native(
-        "SolidCraft",
+        "MonSolid",
         options,
         Box::new(move |cc| {
             created_in_app.store(true, std::sync::atomic::Ordering::SeqCst);

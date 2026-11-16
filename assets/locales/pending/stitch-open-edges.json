@@ -22,5 +22,8 @@
   },
   "zh": {
     "diagnostic.stitch_open_edges": "缝合结果 `{body}` 仍未闭合（边界边数量：{count}）。"
+  },
+  "mn": {
+    "diagnostic.stitch_open_edges": "Оёлтын үр дүн `{body}` битүү бус хэвээр байна (хилийн ирмэг: {count})."
   }
 }

@@ -2,7 +2,7 @@
 //! filling the disk (docs/crash-reports.md).
 //!
 //! - **Panics** are caught by a hook. One inside a command becomes a report with the design as
-//!   it was before the command and the command itself, so `solidcraft-cli run replay.json --in
+//!   it was before the command and the command itself, so `monsolid-cli run replay.json --in
 //!   design.sc` reproduces it. Panics the vendored kernel raises (and
 //!   `solidcraft_kernel::guard` turns into errors) are reported the same way, marked recovered.
 //!   A panic on a Rayon worker does not see this thread's command scope. While a command is
@@ -1015,7 +1015,7 @@ fn unclean_exit(dir: &Path, build: &Build, journal: &Path) {
             )
         }
         None => (
-            format!("SolidCraft {was} (started {when}) ended without a clean exit {during}"),
+            format!("MonSolid {was} (started {when}) ended without a clean exit {during}"),
             match (&starting, doing) {
                 (Some((p, _)), _) => format!("unclean exit during startup: {p}"),
                 (None, c) => format!("unclean exit in {}", c.unwrap_or("(between commands)")),
@@ -1192,8 +1192,8 @@ fn write_report(state: &State, kind: &str, p: Option<&Panic>, extra: Extra) -> O
             }
         }
         let reproduce = match (files.contains_key("replay"), files.contains_key("design")) {
-            (true, true) => Some(format!("solidcraft-cli crashes replay {id}")),
-            (true, false) => Some(format!("solidcraft-cli crashes replay {id}  (starts from a new design)")),
+            (true, true) => Some(format!("monsolid-cli crashes replay {id}")),
+            (true, false) => Some(format!("monsolid-cli crashes replay {id}  (starts from a new design)")),
             _ => None,
         };
         let environment = state.environment.lock().map(|e| e.clone()).unwrap_or_default();

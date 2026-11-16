@@ -78,5 +78,15 @@
     "tab_strip.workspace_design": "设计工作区",
     "tab_strip.workspace_drawing": "工程图工作区",
     "tab_strip.workspace_render": "渲染工作区"
+  },
+  "mn": {
+    "Open another view": "Өөр харагдац нээх",
+    "Show views as tabs": "Харагдацуудыг таб болгон харуулах",
+    "tab_strip.more": "Өөр {n}",
+    "tab_strip.switch_view": "Харагдац сэлгэх",
+    "tab_strip.workspace_animation": "Анимацийн ажлын орчин",
+    "tab_strip.workspace_design": "Төслийн ажлын орчин",
+    "tab_strip.workspace_drawing": "Зургийн ажлын орчин",
+    "tab_strip.workspace_render": "Рендерийн ажлын орчин"
   }
 }

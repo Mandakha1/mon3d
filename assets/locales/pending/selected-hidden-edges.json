@@ -30,5 +30,9 @@
   "zh": {
     "prefs.show_selected_hidden_edges": "显示所选实体的隐藏边",
     "prefs.show_selected_hidden_edges_help": "在模型遮挡处以淡色绘制所选实体的边"
+  },
+  "mn": {
+    "prefs.show_selected_hidden_edges": "Сонгосон биеүүдийн далд ирмэгийг харуулах",
+    "prefs.show_selected_hidden_edges_help": "Сонгосон биеийн загвараар халхлагдсан ирмэгүүдийг бүдэг зурах"
   }
 }

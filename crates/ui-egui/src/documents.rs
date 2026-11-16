@@ -1378,9 +1378,9 @@ impl WindowTitle {
         Some(match name {
             Some(name) => {
                 let name = solidcraft_ui_text::Locale::for_language(language).given_name(name);
-                format!("{name}{} — SolidCraft", if dirty { " *" } else { "" })
+                format!("{name}{} — {}", if dirty { " *" } else { "" }, crate::brand::FULL_NAME)
             }
-            None => "SolidCraft".into(),
+            None => crate::brand::FULL_NAME.into(),
         })
     }
 }
@@ -2329,36 +2329,36 @@ mod tests {
         let mut a = app();
         a.home.open = false;
         let initial = a.session.doc.name.clone();
-        assert_eq!(title_commands(&mut a), [format!("{initial} — SolidCraft")]);
+        assert_eq!(title_commands(&mut a), [format!("{initial} — MonSolid 2026")]);
         assert!(title_commands(&mut a).is_empty(), "unchanged frames send no command");
         a.session.execute("component.rename", &json!({"component": 0, "name": "Bracket"})).unwrap();
-        assert_eq!(title_commands(&mut a), ["Bracket * — SolidCraft"]);
+        assert_eq!(title_commands(&mut a), ["Bracket * — MonSolid 2026"]);
         let path = std::env::temp_dir().join(format!("solidcraft-window-title-{}.solidcraft", std::process::id()));
         let path = path.to_string_lossy().into_owned();
         a.session.execute("file.save", &json!({"path": path})).unwrap();
         let saved = a.session.doc.name.clone();
-        assert_eq!(title_commands(&mut a), [format!("{saved} — SolidCraft")]);
+        assert_eq!(title_commands(&mut a), [format!("{saved} — MonSolid 2026")]);
         a.session.execute("component.rename", &json!({"component": 0, "name": "Housing"})).unwrap();
-        assert_eq!(title_commands(&mut a), ["Housing * — SolidCraft"]);
+        assert_eq!(title_commands(&mut a), ["Housing * — MonSolid 2026"]);
         a.session.execute("edit.undo", &json!({})).unwrap();
-        assert_eq!(title_commands(&mut a), [format!("{saved} — SolidCraft")]);
+        assert_eq!(title_commands(&mut a), [format!("{saved} — MonSolid 2026")]);
         new_tab(&mut a);
         let blank = a.session.doc.name.clone();
-        assert_eq!(title_commands(&mut a), [format!("{blank} — SolidCraft")]);
+        assert_eq!(title_commands(&mut a), [format!("{blank} — MonSolid 2026")]);
         switch(&mut a, 0);
-        assert_eq!(title_commands(&mut a), [format!("{saved} — SolidCraft")]);
+        assert_eq!(title_commands(&mut a), [format!("{saved} — MonSolid 2026")]);
         switch(&mut a, 1);
         title_commands(&mut a);
         a.open_path(&path);
-        assert_eq!(title_commands(&mut a), [format!("{saved} — SolidCraft")]);
+        assert_eq!(title_commands(&mut a), [format!("{saved} — MonSolid 2026")]);
         a.session.execute("component.rename", &json!({"component": 0, "name": "Saved copy"})).unwrap();
-        assert_eq!(title_commands(&mut a), ["Saved copy * — SolidCraft"]);
+        assert_eq!(title_commands(&mut a), ["Saved copy * — MonSolid 2026"]);
         let copy = format!("{path}.copy.solidcraft");
         a.session.execute("file.save_as", &json!({"path": copy})).unwrap();
         let copy_name = std::path::Path::new(&copy).file_stem().unwrap().to_str().unwrap();
-        assert_eq!(title_commands(&mut a), [format!("{copy_name} — SolidCraft")]);
+        assert_eq!(title_commands(&mut a), [format!("{copy_name} — MonSolid 2026")]);
         a.open_path(&path);
-        assert_eq!(title_commands(&mut a), [format!("{saved} — SolidCraft")]);
+        assert_eq!(title_commands(&mut a), [format!("{saved} — MonSolid 2026")]);
         std::fs::remove_file(copy).unwrap();
         std::fs::remove_file(path).unwrap();
     }
@@ -2367,11 +2367,11 @@ mod tests {
     fn window_title_respects_home_and_embedded_hosts() {
         let mut a = app();
         a.home.open = true;
-        assert_eq!(title_commands(&mut a), ["SolidCraft"]);
+        assert_eq!(title_commands(&mut a), ["MonSolid 2026"]);
         assert!(title_commands(&mut a).is_empty());
         a.home.open = false;
         let name = a.session.doc.name.clone();
-        assert_eq!(title_commands(&mut a), [format!("{name} — SolidCraft")]);
+        assert_eq!(title_commands(&mut a), [format!("{name} — MonSolid 2026")]);
         for editor in [false, true] {
             let mut embedded = app();
             embedded.home.open = false;
@@ -2386,20 +2386,20 @@ mod tests {
         let mut a = app();
         a.home.open = false;
         a.session.execute("component.rename", &json!({"component": 0, "name": "Bracket"})).unwrap();
-        assert_eq!(title_commands(&mut a), ["Bracket * — SolidCraft"]);
+        assert_eq!(title_commands(&mut a), ["Bracket * — MonSolid 2026"]);
         a.home.open = true;
         assert!(title_commands(&mut a).is_empty(), "opening the start page does not close the design");
         close(&mut a, 0, true);
-        assert_eq!(title_commands(&mut a), ["SolidCraft"], "closing the last design leaves only the blank placeholder");
+        assert_eq!(title_commands(&mut a), ["MonSolid 2026"], "closing the last design leaves only the blank placeholder");
     }
 
     #[test]
     fn window_title_formats_dirty_state_and_suppresses_unchanged_titles() {
         let mut title = WindowTitle::default();
-        assert_eq!(title.update(Some("Plate"), false, "en").as_deref(), Some("Plate — SolidCraft"));
+        assert_eq!(title.update(Some("Plate"), false, "en").as_deref(), Some("Plate — MonSolid 2026"));
         assert!(title.update(Some("Plate"), false, "en").is_none());
-        assert_eq!(title.update(Some("Plate"), true, "en").as_deref(), Some("Plate * — SolidCraft"));
-        assert_eq!(title.update(None, true, "en").as_deref(), Some("SolidCraft"));
+        assert_eq!(title.update(Some("Plate"), true, "en").as_deref(), Some("Plate * — MonSolid 2026"));
+        assert_eq!(title.update(None, true, "en").as_deref(), Some("MonSolid 2026"));
         assert!(title.update(None, false, "fr").is_none());
     }
 

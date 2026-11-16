@@ -198,5 +198,30 @@
     "design_view.sheet_deleted_body": "撤销将恢复它以及此视图的原状。",
     "design_view.source_unsaved": "{name} 有未保存的更改。此图纸显示的是已保存的文件。",
     "design_view.undo_delete": "撤销删除"
+  },
+  "mn": {
+    "Animation": "Анимаци",
+    "Close design": "Төслийг хаах",
+    "Close other views": "Бусад харагдацыг хаах",
+    "Close view": "Харагдацыг хаах",
+    "Close views to the right": "Баруун талын харагдацуудыг хаах",
+    "Duplicate this view": "Энэ харагдацыг хувилах",
+    "Duplicate view": "Харагдацыг хувилах",
+    "Model": "Загвар",
+    "Open as a view": "Харагдац болгон нээх",
+    "Open in new window": "Шинэ цонхонд нээх",
+    "Rename view": "Харагдацын нэрийг өөрчлөх",
+    "Render": "Рендер",
+    "Reopen closed view": "Хаасан харагдацыг дахин нээх",
+    "Sheet": "Хуудас",
+    "Sketch": "Эскиз",
+    "design_view.close_design_detail": "Төслийг хаахад түүний {n} харагдац хаагдана. Ганц харагдацыг хаахад хэзээ ч асуухгүй.",
+    "design_view.close_view": "Харагдацыг хаах",
+    "design_view.follow_live": "Шууд дагах",
+    "design_view.save_design": "{name} төслийг хадгалах",
+    "design_view.sheet_deleted": "{name} устгагдсан",
+    "design_view.sheet_deleted_body": "Буцаах нь үүнийг энэ харагдацын хамт өмнөх байдлаар нь сэргээнэ.",
+    "design_view.source_unsaved": "{name} хадгалаагүй өөрчлөлттэй. Энэ хуудас хадгалсан файлыг харуулж байна.",
+    "design_view.undo_delete": "Устгалтыг буцаах"
   }
 }

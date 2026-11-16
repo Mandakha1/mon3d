@@ -235,8 +235,8 @@ pub fn app_bar(app: &mut SolveApp, ui: &mut egui::Ui) {
             let palette_shortcut = crate::keymap::display_for(app, "ui.palette");
             // Narrow windows retain Save; Undo and Redo remain available from their shortcuts and menus.
             let bar = app_bar::AppBar {
-                mark: &|painter, at| solidcraft_look::glyphs::brand_mark(painter, at),
-                name: "SolidCraft",
+                mark: &|painter, at| crate::brand::paint_mark(painter, at, 20.0),
+                name: crate::brand::NAME,
                 home: app_bar::BarButton { id: "home", icon: "home", tip: app.tr("ui.start_page"), enabled: idle, narrow: false, wide_only: false },
                 file: app.tr("ui.file"),
                 file_open,

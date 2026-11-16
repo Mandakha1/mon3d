@@ -1,4 +1,4 @@
-//! The `solvecraft-cli` compatibility alias forwards to `solidcraft-cli`.
+//! The `solvecraft-cli` compatibility alias forwards to `monsolid-cli`.
 use std::process::Command;
 
 #[test]
@@ -6,9 +6,9 @@ fn legacy_alias_forwards_with_a_deprecation_note() {
     let out = Command::new(env!("CARGO_BIN_EXE_solvecraft-cli")).arg("--version").output().unwrap();
     assert!(out.status.success(), "{out:?}");
     let stdout = String::from_utf8_lossy(&out.stdout);
-    assert_eq!(stdout.trim(), format!("solidcraft-cli {}", env!("CARGO_PKG_VERSION")));
+    assert_eq!(stdout.trim(), format!("monsolid-cli {}", env!("CARGO_PKG_VERSION")));
     let stderr = String::from_utf8_lossy(&out.stderr);
-    assert!(stderr.contains("deprecated") && stderr.contains("solidcraft-cli"), "{stderr}");
+    assert!(stderr.contains("deprecated") && stderr.contains("monsolid-cli"), "{stderr}");
 }
 
 #[test]

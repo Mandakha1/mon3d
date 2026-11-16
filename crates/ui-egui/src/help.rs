@@ -60,6 +60,11 @@ pub fn run(app: &mut SolveApp, ctx: &egui::Context, item: &str) {
     match item {
         "docs" => ctx.open_url(egui::OpenUrl::new_tab(DOCS_URL)),
         "about" => app.help.about = true,
+        "news" => {
+            if let Some(news) = &mut app.news {
+                news.open_list();
+            }
+        }
         "version" => {
             ctx.open_url(egui::OpenUrl::new_tab(crate::update::release_notes_url(crate::update::current_version(), crate::update::release_build())))
         }
@@ -87,13 +92,13 @@ pub fn run(app: &mut SolveApp, ctx: &egui::Context, item: &str) {
     }
 }
 
-/// Add SolidCraft's MCP server to the AI assistants installed here (`solidcraft-cli mcp setup`),
-/// with the `solidcraft-cli` beside this program. One line per client.
+/// Add SolidCraft's MCP server to the AI assistants installed here (`monsolid-cli mcp setup`),
+/// with the `monsolid-cli` beside this program. One line per client.
 #[cfg(not(target_arch = "wasm32"))]
 fn connect_assistants() -> Vec<String> {
     use solidcraft_engine::agent_setup as setup;
     let Some(cli) = crate::agent_chat::find_cli() else {
-        return vec!["solidcraft-cli was not found next to SolidCraft; run `solidcraft-cli mcp setup` from a terminal.".into()];
+        return vec!["monsolid-cli was not found next to SolidCraft; run `monsolid-cli mcp setup` from a terminal.".into()];
     };
     let cli = cli.canonicalize().unwrap_or(cli).to_string_lossy().trim_start_matches(r"\\?\").to_owned();
     match setup::setup(&[], &setup::Env::from_process(), &cli) {
@@ -147,12 +152,13 @@ pub fn show(app: &mut SolveApp, ctx: &egui::Context, anchor: egui::Pos2) {
                         ("docs", "Documentation", "library"),
                         ("about", "About SolidCraft", "help"),
                         ("updates", solidcraft_ui_text::tr("update.check_for_updates"), "update"),
+                        ("news", if solidcraft_ui_text::language() == "mn" { "Мэдээ, сургалт…" } else { "News and courses…" }, "list"),
                         ("shortcuts", "Keyboard Shortcuts", "list"),
                         ("messages", "Messages…", "list"),
                         ("report", "Report an Issue…", "bug_report"),
                         ("crashes", "Crash Reports…", "status_error"),
                         ("connect", "Connect AI assistants…", "settings"),
-                        ("install_cli", "Install solidcraft-cli command", "settings"),
+                        ("install_cli", "Install monsolid-cli command", "settings"),
                     ]
                     .into_iter()
                     .filter(|(id, ..)| *id != "install_cli" || cfg!(target_os = "macos"))
@@ -208,6 +214,7 @@ fn about(app: &mut SolveApp, ctx: &egui::Context) {
         .cards(2.0)
         .actions("", "Close", None)
         .show(ctx, true, |ui| {
+            ui.heading(crate::brand::FULL_NAME);
             ui_kit::text(
                 ui,
                 &solidcraft_ui_text::format("help.build", &[("version", VERSION), ("commit", COMMIT), ("date", BUILD_DATE)]),
@@ -218,6 +225,11 @@ fn about(app: &mut SolveApp, ctx: &egui::Context) {
                 solidcraft_ui_text::tr_label("Open-source parametric 3D CAD in Rust. Licensed MIT OR Apache-2.0."),
                 ui_kit::Text::Note("description"),
             );
+            ui.horizontal_wrapped(|ui| {
+                ui.label(solidcraft_ui_text::tr("help.based_on"));
+                ui.hyperlink_to("github.com/tangency-labs/solidcraft", crate::brand::UPSTREAM);
+                ui.hyperlink_to("github.com/Mandakha1/monsolid", crate::brand::SOURCE);
+            });
             ui.horizontal(|ui| {
                 for link in crate::links::LINKS {
                     let button = ui_kit::button(ui, solidcraft_ui_text::tr(link.label), ui_kit::Button::Normal).backing_on_hover_text(link.url);

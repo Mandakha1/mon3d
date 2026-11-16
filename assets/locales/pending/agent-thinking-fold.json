@@ -47,5 +47,12 @@
     "ui.agent_chat_thinking_show": "显示模型的思考",
     "ui.agent_thinking_folded": "在每条回复中折叠",
     "ui.agent_thinking_folded_note": "每条回复中模型的思考默认折叠；点击“思考”即可展开。关闭：以展开状态显示。"
+  },
+  "mn": {
+    "ui.agent_chat_thinking": "Бодол",
+    "ui.agent_chat_thinking_hide": "AI загварын бодлыг нуух",
+    "ui.agent_chat_thinking_show": "AI загварын бодлыг харуулах",
+    "ui.agent_thinking_folded": "Хариулт бүрт хураасан",
+    "ui.agent_thinking_folded_note": "Хариулт бүрт AI загварын бодол хураагдсан байдлаар эхэлнэ; нээхийн тулд Бодол дээр дарна уу. Унтраалттай: дэлгэгдсэн байдлаар харагдана."
   }
 }

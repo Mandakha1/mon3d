@@ -16,6 +16,7 @@ pub mod ai_connect;
 pub use solidcraft_ui_kit::app_bar;
 pub use solidcraft_ui_kit::blur;
 pub mod bom_panel;
+pub mod brand;
 pub mod browser;
 pub mod browser_canvas;
 pub mod browser_prompts;
@@ -694,6 +695,8 @@ pub struct SolveApp {
     pub crashes: crash_ui::CrashUi,
     /// The update check and its window (`update`).
     pub updater: update::Updater,
+    /// News, courses and offers (`mon_news`), started once the host has a network client.
+    pub news: Option<mon_news::News>,
     /// Safari's steps for installing the web app, while their window is open (`install`).
     pub install_steps: Option<install::Steps>,
     /// Toolbar buttons the user pinned, removed or reordered.
@@ -1020,6 +1023,7 @@ impl SolveApp {
             issue_report: issue_report::ReportState::default(),
             crashes: crash_ui::CrashUi::default(),
             updater: update::Updater::default(),
+            news: None,
             install_steps: None,
             toolbar_custom: toolbar_custom::ToolbarCustom::default(),
             settings_profiles: settings_profiles::Profiles::default(),
@@ -3687,6 +3691,7 @@ impl SolveApp {
         recovery_ui::tick(self);
         open_elsewhere::tick(self, ctx);
         update::tick(self, ctx);
+        news_tick(self, ctx);
         if self.issue_report.draft.is_none() && self.file_picker.is_none() {
             // Files dropped on the theme Import tile are themes (#8226).
             prefs::take_theme_drops(self, ctx);
@@ -4180,4 +4185,25 @@ const SKETCH_TAB: &str = "SKETCH";
 
 fn ends_sketch(id: &str) -> bool {
     solidcraft_engine::find_command(id).is_some_and(|c| c.tab != SKETCH_TAB && SKETCH_ENDING_PANELS.contains(&c.panel) && c.id != "sketch.create")
+}
+
+/// MonSolid's news, courses and offers (`mon_news`): the owner's feed, read when the app starts and
+/// every few hours, shown as a card and (Windows) a notification. Needs the host's HTTPS client, so
+/// tests and the browser build never start it.
+fn news_tick(app: &mut SolveApp, ctx: &egui::Context) {
+    if app.news.is_none() {
+        let Some(get) = app.services.http_get.clone() else { return };
+        let fetch: mon_news::Fetch = std::sync::Arc::new(move |url: &str| get(url).map_err(|e| e.to_string()));
+        app.news = Some(mon_news::News::new(mon_news::Config {
+            product: "monsolid",
+            app_name: brand::FULL_NAME,
+            aumid: brand::AUMID,
+            url: mon_news::FEED_URL.into(),
+            store_dir: solidcraft_engine::recovery::data_dir(),
+            fetch: Some(fetch),
+        }));
+    }
+    if let Some(news) = &mut app.news {
+        news.show(ctx, solidcraft_ui_text::language());
+    }
 }

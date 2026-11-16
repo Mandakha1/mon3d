@@ -9,6 +9,7 @@ license.workspace = true
 workspace = true
 
 [dependencies]
+mon-news = { path = "../mon-news" }
 solidcraft-viewport-egui = { workspace = true }
 solidcraft-viewport-gpu = { workspace = true }
 solidcraft-viewport = { workspace = true }

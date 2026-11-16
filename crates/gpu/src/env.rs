@@ -18,7 +18,7 @@ pub const POLICY: &str = "SOLIDCRAFT_GPU";
 pub const CPU_TESS: &str = "SOLIDCRAFT_CPU_TESS";
 
 /// What to tell someone whose machine has no adapter under the policy.
-const NO_ADAPTER_HINT: &str = "set SOLIDCRAFT_GPU to choose another policy; `solidcraft-cli gpu` lists the adapters this machine offers";
+const NO_ADAPTER_HINT: &str = "set SOLIDCRAFT_GPU to choose another policy; `monsolid-cli gpu` lists the adapters this machine offers";
 
 /// The policy `value` (the variable's value, `None` when unset) names: [`Policy::Auto`] when unset,
 /// an error naming the variable when it names none.
@@ -101,7 +101,7 @@ mod tests {
     fn a_missing_adapter_is_explained_with_the_apps_variable() {
         let e = explain(&GpuError::NoAdapter("hardware"));
         assert!(
-            e.starts_with(&GpuError::NoAdapter("hardware").to_string()) && e.contains("SOLIDCRAFT_GPU") && e.contains("solidcraft-cli gpu"),
+            e.starts_with(&GpuError::NoAdapter("hardware").to_string()) && e.contains("SOLIDCRAFT_GPU") && e.contains("monsolid-cli gpu"),
             "{e}"
         );
         assert_eq!(explain(&GpuError::DeviceLost), GpuError::DeviceLost.to_string());

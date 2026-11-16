@@ -19,5 +19,8 @@
   },
   "zh": {
     "ui.toggle_dimension_select_first": "请先选择一个尺寸:在草图中点击某个尺寸。"
+  },
+  "mn": {
+    "ui.toggle_dimension_select_first": "Эхлээд хэмжээс сонгоно уу: эскиз дээрх аль нэгийг дарна уу."
   }
 }

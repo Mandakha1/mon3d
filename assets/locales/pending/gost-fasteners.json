@@ -218,5 +218,15 @@
     "parts.family.hex_nut_gost": "六角螺母",
     "parts.family.set_screw_gost": "內六角平端緊定螺釘",
     "parts.family.socket_head_cap_screw_gost": "內六角圓柱頭螺釘"
+  },
+  "mn": {
+    "parts.family.dowel_pin_gost": "Цилиндр тээглүүр, хатууруулаагүй",
+    "parts.family.hex_bolt_gost": "Зургаан талт толгойтой боолт",
+    "parts.family.hex_nut_gost": "Зургаан талт самар",
+    "parts.family.hex_nut_thin_gost": "Нимгэн зургаан талт самар",
+    "parts.family.set_screw_gost": "Дотоод зургаан талт тогтоогч шураг, хавтгай үзүүртэй",
+    "parts.family.socket_head_cap_screw_gost": "Дотоод зургаан талт цилиндр толгойтой шураг",
+    "parts.family.washer_gost": "Хавтгай шайб, A нарийвчлалын анги",
+    "parts.family.washer_large_gost": "Том хавтгай шайб, A нарийвчлалын анги"
   }
 }

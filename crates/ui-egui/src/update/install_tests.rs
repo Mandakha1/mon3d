@@ -184,13 +184,13 @@ fn the_portable_zip_swaps_both_executables() {
     let dir = scratch("portable");
     let exe = dir.join("solidcraft.exe");
     std::fs::write(&exe, b"old app").unwrap();
-    std::fs::write(dir.join("solidcraft-cli.exe"), b"old cli").unwrap();
+    std::fs::write(dir.join("monsolid-cli.exe"), b"old cli").unwrap();
     let mut zip_bytes = Vec::new();
     {
         let mut z = zip::ZipWriter::new(std::io::Cursor::new(&mut zip_bytes));
         let o = zip::write::SimpleFileOptions::default();
         z.add_directory("solidcraft-9.9.9-windows-x64-portable/", o).unwrap();
-        for (n, b) in [("solidcraft.exe", &b"new app"[..]), ("solidcraft-cli.exe", b"new cli"), ("README.md", b"readme")] {
+        for (n, b) in [("solidcraft.exe", &b"new app"[..]), ("monsolid-cli.exe", b"new cli"), ("README.md", b"readme")] {
             z.start_file(format!("solidcraft-9.9.9-windows-x64-portable/{n}"), o).unwrap();
             z.write_all(b).unwrap();
         }
@@ -203,7 +203,7 @@ fn the_portable_zip_swaps_both_executables() {
         run(&r, &InstallKind::WindowsPortable, &Method::PortableZip(exe.clone()), "x86_64", &n, &dir.join("staging"), &Progress::default()).unwrap();
     assert_eq!(out, Outcome::Restart(exe.clone()));
     assert_eq!(std::fs::read(&exe).unwrap(), b"new app");
-    assert_eq!(std::fs::read(dir.join("solidcraft-cli.exe")).unwrap(), b"new cli");
+    assert_eq!(std::fs::read(dir.join("monsolid-cli.exe")).unwrap(), b"new cli");
     assert!(!dir.join("staging").join(name).exists(), "the zip is removed");
     // A zip without the app is refused and changes nothing.
     std::fs::write(dir.join("empty.zip"), {

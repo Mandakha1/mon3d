@@ -30,15 +30,15 @@ use crate::ui_kit;
 use solidcraft_theme::Tokens;
 
 /// The repository releases come from.
-pub const REPO: &str = "tangency-labs/solidcraft";
+pub const REPO: &str = "Mandakha1/monsolid";
 /// The one request an update check makes.
-pub const LATEST_API: &str = "https://api.github.com/repos/tangency-labs/solidcraft/releases/latest";
+pub const LATEST_API: &str = "https://api.github.com/repos/Mandakha1/monsolid/releases/latest";
 /// Where Download goes when no package fits this installation.
-pub const RELEASES_PAGE: &str = "https://github.com/tangency-labs/solidcraft/releases/latest";
+pub const RELEASES_PAGE: &str = "https://github.com/Mandakha1/monsolid/releases/latest";
 /// Release pages and assets must be on GitHub, under this repository. The repository moved to the
 /// `tangency-labs` organisation, so releases may still name either owner (older releases and the
 /// links GitHub redirects keep the old one).
-const RELEASE_PREFIXES: [&str; 2] = ["https://github.com/bherbruck/solidcraft/releases/", "https://github.com/tangency-labs/solidcraft/releases/"];
+const RELEASE_PREFIXES: [&str; 2] = ["https://github.com/Mandakha1/monsolid/releases/", "https://github.com/mandakha1/monsolid/releases/"];
 
 /// A release page or asset URL: github.com, one of the two owners, exactly `solidcraft`, then
 /// `/releases/` (the trailing slash rules out look-alike names such as `solidcraft-evil`).
@@ -46,6 +46,8 @@ fn is_release_url(url: &str) -> bool {
     RELEASE_PREFIXES.iter().any(|p| url.starts_with(p))
 }
 
+/// MonSolid checks for updates by itself only once it publishes releases (Check now always works).
+pub const AUTOMATIC_CHECKS: bool = false;
 /// While the app stays open, automatic checks run once a day (every start checks too).
 pub const CHECK_INTERVAL_S: f64 = 24.0 * 3600.0;
 /// Remind me later hides the button for three days.
@@ -231,7 +233,7 @@ pub fn detect(p: &Probe) -> InstallKind {
             if installed || under("ProgramFiles") || under("ProgramW6432") || under("ProgramFiles(x86)") {
                 return InstallKind::WindowsMsi;
             }
-            if exe.parent().is_some_and(|d| (p.exists)(&d.join("solidcraft-cli.exe"))) {
+            if exe.parent().is_some_and(|d| (p.exists)(&d.join("monsolid-cli.exe"))) {
                 return InstallKind::WindowsPortable;
             }
             InstallKind::WindowsExe
@@ -735,6 +737,7 @@ pub fn tick(app: &mut SolveApp, ctx: &egui::Context) {
     let launch = !app.updater.launch_checked;
     if app.updater.job.is_none()
         && app.updater.rx.is_none()
+        && AUTOMATIC_CHECKS
         && app.preferences.check_updates
         && app.preferences.update.due(now, launch)
         && available(app)
