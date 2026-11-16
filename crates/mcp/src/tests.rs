@@ -3377,7 +3377,7 @@ fn a_bridge_made_before_the_app_runs_connects_once_it_does() {
     // Still "connected to the SolidCraft app", which the skills read as bridged.
     assert!(remote.describe().starts_with("connected to the SolidCraft app") && remote.describe().contains("not running"), "{}", remote.describe());
     let e = remote.call("engine.execute", json!({"command": "inspect.measure"})).unwrap_err();
-    assert!(e.starts_with(crate::backend::NOT_RUNNING) && e.contains(&format!("solidcraft --control {port}")), "{e}");
+    assert!(e.starts_with(crate::backend::NOT_RUNNING) && e.contains(&format!("monsolid --control {port}")), "{e}");
     let batch = crate::call_tool(&mut remote, "batch", &json!({"commands": [{"command": "solid.box"}]}));
     let text = batch["content"][0]["text"].as_str().unwrap_or_default();
     assert_eq!(batch["isError"], true);

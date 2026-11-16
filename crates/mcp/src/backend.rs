@@ -66,7 +66,7 @@ pub use remote::{Auto, Remote};
 
 /// How a tool error starts when no app listens at the bridged address. The agent reads it, and
 /// `batch` uses it to tell "never sent" from "sent, reply lost".
-pub(crate) const NOT_RUNNING: &str = "no SolidCraft app is listening at";
+pub(crate) const NOT_RUNNING: &str = "no MonSolid app is listening at";
 
 /// An in-process headless session (no window); renders with the CPU rasterizer.
 pub struct Headless {

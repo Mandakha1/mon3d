@@ -35,9 +35,8 @@ pub const REPO: &str = "Mandakha1/monsolid";
 pub const LATEST_API: &str = "https://api.github.com/repos/Mandakha1/monsolid/releases/latest";
 /// Where Download goes when no package fits this installation.
 pub const RELEASES_PAGE: &str = "https://github.com/Mandakha1/monsolid/releases/latest";
-/// Release pages and assets must be on GitHub, under this repository. The repository moved to the
-/// `tangency-labs` organisation, so releases may still name either owner (older releases and the
-/// links GitHub redirects keep the old one).
+/// Release pages and assets must be on GitHub, under MonSolid's repository (either spelling of the
+/// owner: GitHub treats owner names case-insensitively in the links it returns).
 const RELEASE_PREFIXES: [&str; 2] = ["https://github.com/Mandakha1/monsolid/releases/", "https://github.com/mandakha1/monsolid/releases/"];
 
 /// A release page or asset URL: github.com, one of the two owners, exactly `solidcraft`, then
@@ -115,7 +114,7 @@ pub fn comparable(v: &semver::Version) -> semver::Version {
 /// candidate and nightly releases are all tagged `v<version>`), else, for a development build or
 /// a string that is not a version, the release history.
 pub fn release_notes_url(version: &str, release_build: bool) -> String {
-    const HISTORY: &str = "https://github.com/tangency-labs/solidcraft/releases";
+    const HISTORY: &str = "https://github.com/Mandakha1/monsolid/releases";
     if release_build && parse_version(version).is_some() && version.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '-' | '+')) {
         format!("{HISTORY}/tag/v{version}")
     } else {
