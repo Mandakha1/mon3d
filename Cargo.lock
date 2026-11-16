@@ -3509,6 +3509,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "mon-news"
+version = "0.1.0"
+dependencies = [
+ "egui",
+ "serde",
+ "serde_json",
+ "windows",
+]
+
+[[package]]
 name = "moxcms"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6144,6 +6154,7 @@ dependencies = [
  "log",
  "lopdf",
  "minisign-verify",
+ "mon-news",
  "nix 0.31.3",
  "pollster 0.4.0",
  "proc-macro2",
